@@ -28,10 +28,16 @@ public class MecanumChassis extends AbstractChassis {
 
 	private final MecanumMath mecanumMath_;
 
+	private static void log(String message) {
+		System.out.println("\n\n" + message + "\n\n");
+	}
+
 	private static EnumMap<WheelPosition, DriveModuleIF> buildDriveModule() {
 		EnumMap<WheelPosition, DriveModuleIF> driveModule = new EnumMap<>(WheelPosition.class);
 
+		log("Creating drive modules");
 		for(WheelPosition pos: WheelPosition.values()) {
+			log("Creating " + pos + " module");
 			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));
 		}
 
@@ -48,12 +54,15 @@ public class MecanumChassis extends AbstractChassis {
 		this(buildDriveModule(), Clock::getSeconds);
 	}
 
+
 	MecanumChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, Supplier<Double> getSeconds) {
 		super(driveModule, WHEELBASE, TRACK_WIDTH, WHEEL_RADIUS, getSeconds);
 
+		log("Initializing Math");
 		mecanumMath_ = new MecanumMath(wheelbase_, trackWidth_, wheelRadius_, wheelRadius_, 1, 180 / Math.PI);
 
 		// north/south speed conversion from 0-1 range to DriveModule maximum (inches/second)
+		log("Getting maximum speed");
 		maximumSpeed_ = driveModule_.values()
 									.stream()
 									.map(DriveModuleIF::getMaximumSpeed)
@@ -64,6 +73,7 @@ public class MecanumChassis extends AbstractChassis {
 //			Math.min(driveModule_[2].getMaximumSpeed(), driveModule_[3].getMaximumSpeed())
 //		);
 		// rotation speed conversion from 0-1 range to DriveModule maximum (degrees/second)
+		log("Grabbing maximum rotation speed");
 		maximumRotation_ = mecanumMath_.forward(MecanumMath.mapOf(
 			WheelPosition.class,
 			-maximumSpeed_,

@@ -11,7 +11,7 @@ public class ResetCrosshairs extends CommandBase {
     }
 
     public ResetCrosshairs(double targetHeight) {
-        addRequirements(robot_.launcher_);
+//        addRequirements(robot_.launcher_);
     }
 
     @Override

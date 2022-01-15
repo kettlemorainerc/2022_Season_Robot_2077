@@ -21,7 +21,7 @@ public class TrackTarget extends CommandBase {
 	boolean debug_ = true;
 
 	public TrackTarget() {
-		addRequirements(robot_.target_);
+//		addRequirements(robot_.target_);
 	}
 
 	@Override

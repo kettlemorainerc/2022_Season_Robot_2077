@@ -16,7 +16,7 @@ public class RangeToCrosshairs extends CommandBase {
   }
 
   public RangeToCrosshairs(double targetHeight) {
-    addRequirements(robot_.launcher_);
+//    addRequirements(robot_.launcher_);
   }
 
   @Override
@@ -26,7 +26,7 @@ public class RangeToCrosshairs extends CommandBase {
   @Override
   public void execute() {
     double range = robot_.crosshairs_.getRange();
-    boolean ok = robot_.launcher_.setRangeUpper(range);
+//    boolean ok = robot_.launcher_.setRangeUpper(range);
     //System.out.println("RANGE:" + range + (!ok ? "(out of range)" : ""));
   }
 

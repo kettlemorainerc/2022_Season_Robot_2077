@@ -25,39 +25,23 @@ public class DriveStation {
     private final List<JoystickButton> buttons = new LinkedList<>();
     private final List<Subsystem> subsystems = new LinkedList<>();
 
-    public DriveStation(Subsystem position_,
-                        Subsystem target_,
-                        Crosshairs crosshairs_,
-                        Subsystem grabber_) {
-        CommandScheduler.getInstance()
-                .setDefaultCommand(grabber_, new RunGrabber(Flight, new JoystickButton(testingStick_, 9)));
+    public DriveStation(Subsystem position_) {
         CommandScheduler.getInstance()
                         .setDefaultCommand(position_, new PrimaryStickDrive3Axis());
-        CommandScheduler.getInstance()
-                        .setDefaultCommand(target_, new TrackTarget());
-        CommandScheduler.getInstance()
-                        .setDefaultCommand(crosshairs_, new AimCrosshairs(secondaryStick_, testingStick_));
-
 //        bindDriverControl(primaryStick_);
         bindTechnicalControl(testingStick_);
     }
 
     private static void bindDriverControl(Joystick primary) {
         JoystickButton primaryTrigger = new JoystickButton(primary, 1);
-//        primaryTrigger.whileHeld(new RunGrabber());
 
-        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());
+//        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());
     }
 
     private void bindTechnicalControl(Joystick testing) {
-        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
-        new JoystickButton(testing, 3).whileHeld(new Launch());
-        new JoystickButton(testing, 4).whileHeld(new LoadLauncher());
-        new JoystickButton(testing, 8).whenPressed(new LoadLauncherBack());
-        new JoystickButton(testing, 10).whileHeld(new SteerToCrosshairs());
-        new JoystickButton(testing, 11).whileHeld(new CenterBallOnVision());
-        new JoystickButton(testing, 12).whileHeld(new LauncherScrewTest(false));
-        new JoystickButton(testing, 16).whileHeld(new LauncherScrewTest(true));
+//        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
+        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
+
     }
 
     /**

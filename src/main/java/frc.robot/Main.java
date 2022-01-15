@@ -23,6 +23,7 @@ public final class Main {
    * Modified to start a org.usfirst.frc.team2077.Robot. Don't change anything else.
    */
   public static void main(String... args) {
+    System.out.println("#######\n\nSTARTING ROBOT\n\n########");
     RobotBase.startRobot(Robot::new);
   }
 }

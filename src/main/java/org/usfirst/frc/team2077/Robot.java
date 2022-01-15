@@ -44,7 +44,6 @@ public class Robot extends TimedRobot {
 	// Sensors.
 	public AngleSensor angleSensor_;
 	public AnalogSettings analogSettings_;
-	public MicroSwitch microSwitch_;
 	// Drive train, including:
 	//   Controller/motor/wheel/encoder units for each wheel.
 	//   Logic for applying robot level functionality to individual wheels.
@@ -54,26 +53,26 @@ public class Robot extends TimedRobot {
 	//    of chassis rotation to move between commands independently of positioning.
 	public Subsystem position_;
 	public Subsystem heading_;
-	public Subsystem target_;
+//	public Subsystem target_;
 	//    Aiming system for elevating ball launcher and pointing the robot. Displayed on DS video.
-	public Crosshairs crosshairs_;
+//	public Crosshairs crosshairs_;
 	//    Ball launcher with ajustable elevation and speed based on range to target.
-	public LauncherIF launcher_;
+//	public LauncherIF launcher_;
 
 
 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
-	public Telemetry telemetry_;
+	// public Telemetry telemetry_;
 	// Default commands
 	//    Autonomous selected via drive station dashboard.
 	protected Command autonomous_;
 	//    Default teleop robot drive.
 	protected Command drive_;
 	//    Continuous update of target range and direction based on robot motion.
-	protected Command track_;
+//	protected Command track_;
 	//    Operator input of target position relative to robot using the stick.
-	protected Command aim_;
+//	protected Command aim_;
 	//    Continuous update of launcher elevation for target range.
-	protected Command range_;
+//	protected Command range_;
 
 	// This class will be instantiated exactly once, via frc.robot.Main.
 	// The constructor initializes the globally accessible static instance,
@@ -94,43 +93,32 @@ public class Robot extends TimedRobot {
 		//analogSettings_ = new AnalogSettings(1, 2, 3);
 
 
-		microSwitch_ = new MicroSwitch(9);
-
-
 		setupDriveTrain();
-		
-		robot_.chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
-		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
-		robot_.crosshairs_.set(Math.atan2(-p.get(EAST), -p.get(NORTH)),
-							   Math.sqrt(p.get(NORTH) * p.get(NORTH) + p.get(EAST) * p.get(EAST)));
-
-		System.out.println("CROSSHAIRS:" + crosshairs_);
-
+//		robot_.chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
+//		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
+//		robot_.crosshairs_.set(Math.atan2(-p.get(EAST), -p.get(NORTH)),
+//							   Math.sqrt(p.get(NORTH) * p.get(NORTH) + p.get(EAST) * p.get(EAST)));
+//
+//		System.out.println("CROSSHAIRS:" + crosshairs_);
 		setupController();
 	}
 
-
-
 	public void setupDriveTrain() {
-		chassis_ = new MecanumChassis();
+//		chassis_ = new MecanumChassis();
 
 		//   These dummy subsystems support separate command ownership of robot motion and rotation.
 		position_ = new SubsystemBase() {
 		};
 		heading_ = new SubsystemBase() {
 		};
-		target_ = new SubsystemBase() {
-		};
-		telemetry_ = new Telemetry();
+		// telemetry_ = new Telemetry();
 
-		launcher_ = new Launcher();
-
-		crosshairs_ = new Crosshairs();
+//		crosshairs_ = new Crosshairs();
 	}
 
 	public void setupController() {
 		// Container for remote control software objects.
-		driveStation_ = new DriveStation(position_, target_, crosshairs_);
+		driveStation_ = new DriveStation(position_);
 	}
 
 	/**
@@ -150,11 +138,11 @@ public class Robot extends TimedRobot {
 		CommandScheduler.getInstance()
 						.run();
 
-		chassis_.driveModule_.values().forEach(module -> {
-			SmartDashboard.putNumber(module.getWheelPosition() + " RPM", ((SparkNeoDriveModule) module).getRPM());
-		});
+//		chassis_.driveModule_.values().forEach(module -> {
+//			SmartDashboard.putNumber(module.getWheelPosition() + " RPM", ((SparkNeoDriveModule) module).getRPM());
+//		});
 
-		SmartDashboard.putNumber("range to target", robot_.crosshairs_.getRange());
+//		SmartDashboard.putNumber("range to target", robot_.crosshairs_.getRange());
 	}
 
 	// The robot and the drive station exchange data packets around 50x/second so long
