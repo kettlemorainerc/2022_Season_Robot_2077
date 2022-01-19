@@ -1,10 +1,7 @@
 
 package org.usfirst.frc.team2077.drivetrain;
 
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
-import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
+import com.revrobotics.*;
 import org.usfirst.frc.team2077.drivetrain.MecanumMath.*;
 
 import static org.usfirst.frc.team2077.drivetrain.MecanumMath.WheelPosition.*;
@@ -57,8 +54,8 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
     }
 
     //6 inch wheels on rnd bot
-    private final CANPIDController pidController;
-    private final CANEncoder encoder;
+    private final SparkMaxPIDController pidController;
+    private final RelativeEncoder encoder;
     private double setPoint;
     private final double circumference;
     private final double maxRPM;

@@ -1,15 +1,8 @@
 package org.usfirst.frc.team2077.sensors;
 
-import static org.usfirst.frc.team2077.Robot.*;
-import edu.wpi.first.wpilibj.I2C;
-
-// import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
- import edu.wpi.first.wpilibj.util.Color;
-import com.revrobotics.ColorSensorV3;
-
-import edu.wpi.first.wpilibj.Talon;//For the motor control
-
-import edu.wpi.first.wpilibj.DriverStation;
+import com.revrobotics.*;
+import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj.util.*;
 
 public class ColorSensor{
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
