@@ -58,10 +58,13 @@ public class Robot extends TimedRobot {
 //	public Crosshairs crosshairs_;
 	//    Ball launcher with ajustable elevation and speed based on range to target.
 //	public LauncherIF launcher_;
+	public SimpleDriveSubsys simpleDriveSubsys_;
+	public LauncherIF launcher_;
 
 
 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
 	// public Telemetry telemetry_;
+	public Launcher testLauncher_; // low-level control for testing
 	// Default commands
 	//    Autonomous selected via drive station dashboard.
 	protected Command autonomous_;
@@ -112,6 +115,12 @@ public class Robot extends TimedRobot {
 		heading_ = new SubsystemBase() {
 		};
 		// telemetry_ = new Telemetry();
+
+		launcher_ = new Launcher();
+		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
+
+//		simpleDriveSubsys_ = new SimpleDriveSubsys();
+//		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
 
 //		crosshairs_ = new Crosshairs();
 	}

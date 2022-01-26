@@ -5,6 +5,7 @@
 
 package org.usfirst.frc.team2077.drivetrain;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import org.usfirst.frc.team2077.*;
 import org.usfirst.frc.team2077.drivetrain.MecanumMath.*;
 import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule.DrivePosition;
@@ -28,17 +29,12 @@ public class MecanumChassis extends AbstractChassis {
 
 	private final MecanumMath mecanumMath_;
 
-	private static void log(String message) {
-		System.out.println("\n\n" + message + "\n\n");
-	}
-
 	private static EnumMap<WheelPosition, DriveModuleIF> buildDriveModule() {
 		EnumMap<WheelPosition, DriveModuleIF> driveModule = new EnumMap<>(WheelPosition.class);
 
-		log("Creating drive modules");
 		for(WheelPosition pos: WheelPosition.values()) {
-			log("Creating " + pos + " module");
-			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));
+//			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));
+//			driveModule.put(pos, new TalonDriveModule(DrivePosition.forWheelPosition(pos)));//DrivePosition.forWheelPosition(pos)));
 		}
 
 		return driveModule;
@@ -54,32 +50,28 @@ public class MecanumChassis extends AbstractChassis {
 		this(buildDriveModule(), Clock::getSeconds);
 	}
 
-
 	MecanumChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, Supplier<Double> getSeconds) {
 		super(driveModule, WHEELBASE, TRACK_WIDTH, WHEEL_RADIUS, getSeconds);
 
-		log("Initializing Math");
 		mecanumMath_ = new MecanumMath(wheelbase_, trackWidth_, wheelRadius_, wheelRadius_, 1, 180 / Math.PI);
 
 		// north/south speed conversion from 0-1 range to DriveModule maximum (inches/second)
-		log("Getting maximum speed");
 		maximumSpeed_ = driveModule_.values()
-									.stream()
-									.map(DriveModuleIF::getMaximumSpeed)
-									.min(Comparator.naturalOrder())
-									.orElseThrow();
+				.stream()
+				.map(DriveModuleIF::getMaximumSpeed)
+				.min(Comparator.naturalOrder())
+				.orElseThrow();
 //		Math.min(
 //			Math.min(driveModule_[0].getMaximumSpeed(), driveModule_[1].getMaximumSpeed()),
 //			Math.min(driveModule_[2].getMaximumSpeed(), driveModule_[3].getMaximumSpeed())
 //		);
 		// rotation speed conversion from 0-1 range to DriveModule maximum (degrees/second)
-		log("Grabbing maximum rotation speed");
 		maximumRotation_ = mecanumMath_.forward(MecanumMath.mapOf(
-			WheelPosition.class,
-			-maximumSpeed_,
-			-maximumSpeed_,
-			maximumSpeed_,
-			maximumSpeed_
+				WheelPosition.class,
+				-maximumSpeed_,
+				-maximumSpeed_,
+				maximumSpeed_,
+				maximumSpeed_
 		)).get(ROTATION);
 
 		// lowest chassis speeds supportable by the drive modules
@@ -87,22 +79,22 @@ public class MecanumChassis extends AbstractChassis {
 		minimumRotation_ = maximumRotation_ * .1;
 
 		System.out.println(getClass().getName() +
-						   "MAXIMUM SPEED:" +
-						   Math.round(maximumSpeed_ * 10.) / 10. +
-						   " IN/SEC MAXIMUM ROTATION:" +
-						   Math.round(maximumRotation_ * 10.) / 10. +
-						   " DEG/SEC");
+				"MAXIMUM SPEED:" +
+				Math.round(maximumSpeed_ * 10.) / 10. +
+				" IN/SEC MAXIMUM ROTATION:" +
+				Math.round(maximumRotation_ * 10.) / 10. +
+				" DEG/SEC");
 		System.out.println(getClass().getName() +
-						   "MINIMUM SPEED:" +
-						   Math.round(minimumSpeed_ * 10.) / 10. +
-						   " IN/SEC MINIMUM ROTATION:" +
-						   Math.round(minimumRotation_ * 10.) / 10. +
-						   " DEG/SEC");
+				"MINIMUM SPEED:" +
+				Math.round(minimumSpeed_ * 10.) / 10. +
+				" IN/SEC MINIMUM ROTATION:" +
+				Math.round(minimumRotation_ * 10.) / 10. +
+				" DEG/SEC");
 		AccelerationLimits a = getAccelerationLimits();
 		System.out.println(getClass().getName() + "ACCELERATION:"
-						   + Math.round(a.get(NORTH, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(NORTH, DECELERATION) * 10.) / 10. + "/"
-						   + Math.round(a.get(EAST, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(EAST, DECELERATION) * 10.) / 10. + "/"
-						   + Math.round(a.get(ROTATION, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(ROTATION, DECELERATION) * 10.) / 10.);
+				+ Math.round(a.get(NORTH, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(NORTH, DECELERATION) * 10.) / 10. + "/"
+				+ Math.round(a.get(EAST, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(EAST, DECELERATION) * 10.) / 10. + "/"
+				+ Math.round(a.get(ROTATION, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(ROTATION, DECELERATION) * 10.) / 10.);
 	}
 
 	@Override
@@ -143,14 +135,14 @@ public class MecanumChassis extends AbstractChassis {
 		// chassis velocity from motor/wheel measurements
 
 		EnumMap<WheelPosition, Double> wheelVelocities = driveModule_.entrySet()
-																	 .stream()
-																	 .map(e -> new SimpleEntry<>(e.getKey(), e.getValue().getVelocity()))
-																	 .collect(toMap(
-																	 	Entry::getKey,
-																		Entry::getValue,
-																		Math::min,
-																		() -> new EnumMap<>(WheelPosition.class)
-																	 ));
+				.stream()
+				.map(e -> new SimpleEntry<>(e.getKey(), e.getValue().getVelocity()))
+				.collect(toMap(
+						Entry::getKey,
+						Entry::getValue,
+						Math::min,
+						() -> new EnumMap<>(WheelPosition.class)
+				));
 		velocityMeasured_ = mecanumMath_.forward(wheelVelocities);
 
 		// TODO: E/W velocities are consistently lower than those calculated from wheel speeds.
@@ -161,14 +153,14 @@ public class MecanumChassis extends AbstractChassis {
 
 		// update position with motion since last update
 		positionSet_.moveRelative(
-			velocitySet_.get(NORTH) * timeSinceLastUpdate_,
-			velocitySet_.get(EAST) * timeSinceLastUpdate_,
-			velocitySet_.get(ROTATION) * timeSinceLastUpdate_
+				velocitySet_.get(NORTH) * timeSinceLastUpdate_,
+				velocitySet_.get(EAST) * timeSinceLastUpdate_,
+				velocitySet_.get(ROTATION) * timeSinceLastUpdate_
 		);
 		positionMeasured_.moveRelative(
-			velocityMeasured_.get(NORTH) * timeSinceLastUpdate_,
-			velocityMeasured_.get(EAST) * timeSinceLastUpdate_,
-			velocityMeasured_.get(ROTATION) * timeSinceLastUpdate_
+				velocityMeasured_.get(NORTH) * timeSinceLastUpdate_,
+				velocityMeasured_.get(EAST) * timeSinceLastUpdate_,
+				velocityMeasured_.get(ROTATION) * timeSinceLastUpdate_
 		);
 		if(robot_.angleSensor_ != null) { // TODO: Confirm AngleSensor is actually reading. Handle bench testing.
 			double[] pS = positionSet_.get();
@@ -189,15 +181,15 @@ public class MecanumChassis extends AbstractChassis {
 
 		// scale all motors proportionally if any are out of range
 		double max = wheelSpeed.values()
-		                       .stream()
-					  .map(vel -> Math.abs(vel) / maximumSpeed_)
-					  .max(Comparator.naturalOrder())
-		              .map(val -> Math.max(1, val))
-					  .orElseThrow();
+				.stream()
+				.map(vel -> Math.abs(vel) / maximumSpeed_)
+				.max(Comparator.naturalOrder())
+				.map(val -> Math.max(1, val))
+				.orElseThrow();
 
 		for (WheelPosition position : WheelPosition.values()) {
 			driveModule_.get(position).setVelocity(
-				wheelSpeed.get(position) / max
+					wheelSpeed.get(position) / max
 			);
 		}
 	}
@@ -220,13 +212,13 @@ public class MecanumChassis extends AbstractChassis {
 //			positionMeasured_
 //		);
 		return "V:" +
-			   Math.round(velocity.get(NORTH) * 10.) / 10. +
-			   "/" +
-			   Math.round(velocity.get(EAST) * 10.) / 10. +
-			   "/" +
-			   Math.round(velocity.get(ROTATION) * 10.) / 10.
-			   +
-			   " W:" +
-			   driveModule_;
+				Math.round(velocity.get(NORTH) * 10.) / 10. +
+				"/" +
+				Math.round(velocity.get(EAST) * 10.) / 10. +
+				"/" +
+				Math.round(velocity.get(ROTATION) * 10.) / 10.
+				+
+				" W:" +
+				driveModule_;
 	}
 }

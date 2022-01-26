@@ -29,18 +29,23 @@ public class DriveStation {
         CommandScheduler.getInstance()
                         .setDefaultCommand(position_, new PrimaryStickDrive3Axis());
 //        bindDriverControl(primaryStick_);
-        bindTechnicalControl(testingStick_);
+        bindTechnicalControl(primaryStick_/*testingStick_*/);
     }
 
     private static void bindDriverControl(Joystick primary) {
         JoystickButton primaryTrigger = new JoystickButton(primary, 1);
 
 //        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());
+//        new JoystickButton(primary, 0).whenPressed(new PrimaryStickDrive3Axis());
+
     }
 
     private void bindTechnicalControl(Joystick testing) {
+//        new JoystickButton(testing, 4).whileHeld(new LoadLauncher());
 //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
-        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
+//        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
+//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
+//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
 
     }
 

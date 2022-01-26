@@ -23,8 +23,8 @@ public class AutonomousCheck extends SequentialCommandGroup{
     public void execute() {
         runAuto = SmartDashboard.getBoolean("Run Autonomous", false);
 
-        if (runAuto) {
-//            new SimulatedStickInput(1, 0, 0).schedule(false);
+        if (runAuto || true) {
+            new SimulatedStickInput(1, 0, 0).schedule(true);
             done = true;
         }
     }
