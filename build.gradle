@@ -1,6 +1,13 @@
 plugins {
     id "java"
     id "edu.wpi.first.GradleRIO" version "2022.2.1"
+    id 'idea'
+}
+
+idea {
+    module {
+        downloadSources = true
+    }
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -95,4 +102,25 @@ test {
     testLogging.showStandardStreams = true
     testLogging.showStackTraces = true
     testLogging.exceptionFormat = "full"
+}
+
+task stuff {
+    doLast {
+        def processDep;
+        processDep = {File f ->
+//            logger.lifecycle(f.absolutePath)
+            if(f.name.endsWith(".jar") || f.name.endsWith(".zip")) {
+                zipTree(f).forEach {
+//                    logger.lifecycle("ZIP TREE ${it.absolutePath}")
+                    processDep(it)
+                }
+            } else if(
+                f.name.contains(".so") ||
+                f.name.toLowerCase().contains("network")
+            ) logger.lifecycle(f.absolutePath);
+        }
+        configurations.nativeRelease.forEach(processDep)
+        configurations.runtimeClasspath.forEach(processDep)
+        configurations.roborioRelease.forEach(processDep)
+    }
 }
