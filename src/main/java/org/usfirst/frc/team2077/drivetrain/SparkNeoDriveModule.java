@@ -18,9 +18,9 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         BACK_LEFT(SOUTH_WEST, 4, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
         FRONT_LEFT(NORTH_WEST, 1, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
 
-        LEFT_SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM),
-        RIGHT_SHOOTER(null, 6, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM)
-        ;
+//        LEFT_SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM),
+//        RIGHT_SHOOTER(null, 6, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM)
+        SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM);        ;
 
         private final double gearRatio;
         private final double radius;
@@ -69,7 +69,7 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         pidController = this.getPIDController();
         encoder = this.getEncoder();
 
-        if(USE_SOFTWARE_PID || position == DrivePosition.LEFT_SHOOTER || position == DrivePosition.RIGHT_SHOOTER) {
+        if(USE_SOFTWARE_PID || position == DrivePosition.SHOOTER) {
             pidController.setP(position.P);
             pidController.setI(position.I);
             pidController.setD(position.D);

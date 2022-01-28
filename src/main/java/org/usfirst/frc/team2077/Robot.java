@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.usfirst.frc.team2077.commands.AutonomousCheck;
+import org.usfirst.frc.team2077.commands.NewLauncher;
 import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection;
 import org.usfirst.frc.team2077.sensors.*;
@@ -65,6 +66,7 @@ public class Robot extends TimedRobot {
 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
 	// public Telemetry telemetry_;
 	public Launcher testLauncher_; // low-level control for testing
+	public NewLauncher newLauncher_; // low-level control for testing
 	// Default commands
 	//    Autonomous selected via drive station dashboard.
 	protected Command autonomous_;
@@ -118,6 +120,8 @@ public class Robot extends TimedRobot {
 
 		launcher_ = new Launcher();
 		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
+
+		newLauncher_ = new NewLauncher();
 
 //		simpleDriveSubsys_ = new SimpleDriveSubsys();
 //		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;

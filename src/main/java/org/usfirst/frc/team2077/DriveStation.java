@@ -10,7 +10,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
-import org.usfirst.frc.team2077.subsystems.Crosshairs;
 
 import java.util.*;
 
@@ -41,11 +40,11 @@ public class DriveStation {
     }
 
     private void bindTechnicalControl(Joystick testing) {
-//        new JoystickButton(testing, 4).whileHeld(new LoadLauncher());
+        new JoystickButton(testing, 1).whileHeld(new LoadLauncher());
 //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
 //        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
 //        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
-//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
+//        new JoystickButton(testing, 1).whenHeld(new NewLauncher(),true);
 
     }
 

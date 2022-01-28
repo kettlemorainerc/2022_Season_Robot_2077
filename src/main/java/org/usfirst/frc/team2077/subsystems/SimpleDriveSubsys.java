@@ -20,7 +20,7 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 //    private final SparkNeoDriveModule shooterL_;
 //    private final SparkNeoDriveModule shooterR_;
 //    private final TalonSRX loader_;
-//    private TalonSRX loader_;
+    private TalonSRX loader_;
 
 
     // elevation screw
@@ -66,8 +66,8 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 //        screw_ = new TalonSRX(1);
 //        screw_.configFactoryDefault();
 
-//       TalonSRX loader_ = new TalonSRX(2);
-//        loader_.configFactoryDefault();
+       TalonSRX loader_ = new TalonSRX(2);
+        loader_.configFactoryDefault();
 
 //        shooterL_ = new SparkNeoDriveModule(SparkNeoDriveModule.DrivePosition.LEFT_SHOOTER); //0
 //
@@ -80,9 +80,8 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 
     @Override
     public void periodic() {
-//        loader_.set(ControlMode.PercentOutput, .4 * screwDirection_);
+        loader_.set(ControlMode.PercentOutput, .4 * screwDirection_);
     }
-
 
 
     @Override
@@ -101,8 +100,8 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 
     @Override
     public void setRunning(boolean running) {
-//        launcherRunning_ = running;
-//        runLauncher(launcherRunning_ ? launcherRPM_ : 0);
+        launcherRunning_ = running;
+        runLauncher(launcherRunning_ ? launcherRPM_ : 0);
     }
 
     @Override
@@ -121,11 +120,11 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 
     @Override
     public void load() {
-        // if (!isLoaded()) {
-        //     loader_.set(ControlMode.PercentOutput,1);
-        // } else {
-        //     loader_.set(ControlMode.PercentOutput,0);
-        // }
+         if (!isLoaded()) {
+             loader_.set(ControlMode.PercentOutput,1);
+         } else {
+             loader_.set(ControlMode.PercentOutput,0);
+         }
     }
 
     @Override
@@ -140,13 +139,13 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 
     @Override
     public void launch() {
-//        // if (isLoaded()) {
+        // if (isLoaded()) {
 //        setRangeUpper(robot_.crosshairs_.getRange());
-//        setRunning(true);
-////        if (isReady()) {
-////            runLoader(0.6);
-////
-////        }
+        setRunning(true);
+        if (isReady()) {
+            runLoader(0.6);
+
+        }
     }
 
     public void stopLaunch() {
@@ -178,16 +177,17 @@ public class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {
 
 
     private void runLauncher(double velocity) {
-//        double leftRPM = 0;
-//        double rightRPM = 0;
-//        if (velocity != 0) {
-//            double bias = velocity * rightLeftBias / 2.;
-//
-//            leftRPM = (velocity - bias) / unitsToRPM;
-//            rightRPM = (velocity + bias) / unitsToRPM;
-//        }
+        double leftRPM = 0;
+        double rightRPM = 0;
+        if (velocity != 0) {
+            double bias = velocity * rightLeftBias / 2.;
+
+            leftRPM = (velocity - bias) / unitsToRPM;
+            rightRPM = (velocity + bias) / unitsToRPM;
+        }
 //        shooterL_.setRPM(leftRPM);
 //        shooterR_.setRPM(rightRPM);
+
     }
 
 //    @Deprecated

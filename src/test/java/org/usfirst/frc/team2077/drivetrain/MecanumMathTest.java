@@ -17,7 +17,7 @@ public class MecanumMathTest {
         velocities.put(WheelPosition.SOUTH_WEST, southWest);
         velocities.put(WheelPosition.NORTH_WEST, northWest);
         return velocities;
-//        return new double[] {northEast, southEast, southWest, northWest} ;
+        //        return new double[] {northEast, southEast, southWest, northWest} ;
     }
     
     public static EnumMap<VelocityDirection, Double> botVelocity(double north, double east, double rotation) {

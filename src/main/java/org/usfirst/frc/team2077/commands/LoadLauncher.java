@@ -11,21 +11,22 @@ import static org.usfirst.frc.team2077.Robot.robot_;
 
 public class LoadLauncher extends CommandBase {
   public LoadLauncher(){
-    addRequirements(robot_.testLauncher_);
+    addRequirements(robot_.newLauncher_);
   }
 
   @Override
   public void initialize() {
+    robot_.newLauncher_.setRunning(true);
   }
 
   @Override
   public void execute() {
-    robot_.testLauncher_.runLoader(.2);
+    robot_.newLauncher_.load();
   }
 
   @Override
   public void end(boolean interrupted) {
-    robot_.testLauncher_.stopLoader();
+    robot_.newLauncher_.stopLoader();
   }
 
   @Override

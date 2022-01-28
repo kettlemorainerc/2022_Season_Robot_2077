@@ -161,11 +161,11 @@ public class Launcher extends SubsystemBase implements LauncherIF {
 
     @Override
     public void load() {
-        // if (!isLoaded()) {
-        //     loader_.set(ControlMode.PercentOutput,1);
-        // } else {
-        //     loader_.set(ControlMode.PercentOutput,0);
-        // }
+         if (!isLoaded()) {
+             loader_.set(ControlMode.PercentOutput,1);
+         } else {
+             loader_.set(ControlMode.PercentOutput,0);
+         }
     }
 
     @Override
@@ -253,17 +253,17 @@ public class Launcher extends SubsystemBase implements LauncherIF {
 
 
     public void runLoader(double speed) {
-//        loader_.set(ControlMode.PercentOutput,-speed);
+        loader_.set(ControlMode.PercentOutput,-speed);
     }
 
     public void stopLoader() {
-//        loader_.set(ControlMode.PercentOutput,0.0);
+        loader_.set(ControlMode.PercentOutput,0.0);
     }
 
     public void stopAll() {
 //        shooterL_.setVelocity(0.0);
 //        shooterR_.setVelocity(0.0);
-//        loader_.set(ControlMode.PercentOutput,0.0);
+        loader_.set(ControlMode.PercentOutput,0.0);
 //        screw_.set(ControlMode.PercentOutput,0.0);
     }
 
