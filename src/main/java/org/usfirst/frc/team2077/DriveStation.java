@@ -40,12 +40,18 @@ public class DriveStation {
     }
 
     private void bindTechnicalControl(Joystick testing) {
-        new JoystickButton(testing, 1).whileHeld(new LoadLauncher());
+        useCommand(new LoadLauncher(), new JoystickButton(testing, 1));
+//        new JoystickButton(testing, 1).whileHeld(new LoadLauncher());
+
 //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
 //        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
 //        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
 //        new JoystickButton(testing, 1).whenHeld(new NewLauncher(),true);
 
+    }
+
+    public static void useCommand(BindableCommand command, JoystickButton button) {
+        command.bind(button);
     }
 
     /**
