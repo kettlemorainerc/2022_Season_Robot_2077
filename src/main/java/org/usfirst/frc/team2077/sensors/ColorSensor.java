@@ -6,19 +6,34 @@ import edu.wpi.first.wpilibj.util.*;
 
 public class ColorSensor{
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
-    private final ColorSensorV3 colorSensor = new ColorSensorV3(i2cPort);
+    private final ColorSensorV3 _colorSensor = new ColorSensorV3(i2cPort);
 
     public ColorSensor(){
 
     }
     
-    public void checkColor(){
-        //int threshold = 150;
+    public Color checkColors(){
 
-        Color color = colorSensor.getColor();
-        System.out.println("Red: " + color.red + "\nGreen" + color.green + "\nBlue" + color.blue + "\n");
+        Color color = _colorSensor.getColor();
+        return color;
+//        "Red: " + color.red + "\nGreen" + color.green + "\nBlue" + color.blue + "\n");
 
         //return (colorSensor.getColor().red + colorSensor.getColor().green + colorSensor.getColor().blue > threshold);
     }
-    
+
+    public int[] getColors(){ return new int[] {_colorSensor.getRed(),_colorSensor.getGreen(),_colorSensor.getBlue(),_colorSensor.getIR(),_colorSensor.getProximity()}; }
+
+    public int getIR(){
+        return _colorSensor.getIR();
+    }
+
+
+    public int isOnShadow(){
+//        Color color = _colorSensor.getColors();
+        int[] colors = getColors();
+        int average = (int) (colors[0] + colors[1] + colors[2]) / 3;
+        return average;//(average > /*Insert threshold number*/);
+    }
+
+
 }

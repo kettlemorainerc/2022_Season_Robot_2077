@@ -9,18 +9,18 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
 
-public class LoadLauncher extends CommandBase {
+public class LoadLauncher extends RepeatedCommand{
   public LoadLauncher(){
     addRequirements(robot_.newLauncher_);
   }
 
   @Override
   public void initialize() {
-    robot_.newLauncher_.setRunning(true);
   }
 
   @Override
   public void execute() {
+    robot_.newLauncher_.setRunning(true);
     robot_.newLauncher_.load();
   }
 

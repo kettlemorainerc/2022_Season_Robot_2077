@@ -9,14 +9,18 @@ import org.usfirst.frc.team2077.subsystems.LauncherIF;
 public class NewLauncher extends CommandBase implements LauncherIF {
     public static final double MAX_RPM = 5_000;
     private TalonSRX _launcherTalon = new TalonSRX(2);
-    private SparkNeoDriveModule _launcherSpark = new SparkNeoDriveModule(2);
+    private SparkNeoDriveModule _shooterNeo = new SparkNeoDriveModule(SparkNeoDriveModule.DrivePosition.SHOOTER);
+    private double SHOOTER_UNITS_TO_RPM = 1;//(600 / 2048); //TODO: Fix this
+    private double DEFAULT_LAUNCHING_SPEED = 600;
 
     //More in use            DEFAULTS
     private double _setPoint = 0.0;
-    private boolean _running = false;
+    private boolean _loaderRunning = false;
+    private boolean _shooterRunning = false;
     private boolean _loaded = false;
-    private boolean _loaderReady = false;
+    private boolean _launcherReady = false;
 
+    private int printingi = 0;
 
     public NewLauncher() {
         _launcherTalon.configFactoryDefault();
@@ -40,20 +44,26 @@ public class NewLauncher extends CommandBase implements LauncherIF {
 
     @Override
     public void setRunning(boolean running) {
-        _running = running;
-        if(_running)
+        _loaderRunning = running;
+        if(_loaderRunning)
             _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
     }
 
     @Override
     public boolean isRunning() {
-        return _running;
+        return _loaderRunning;
     }
 
     @Override
     public void load() {
-        setRPM(.50);
-        if (_running && _setPoint != 0) {
+        setLoaderPercentage(.2);
+        _shooterRunning = true;
+
+        if(_shooterRunning && true){//TODO: Make take a _setPoint
+            _shooterNeo.setRPM(DEFAULT_LAUNCHING_SPEED);
+        }
+
+        if (_loaderRunning && _setPoint != 0) {
             _launcherTalon.set(ControlMode.PercentOutput,_setPoint);
         } else {
             _launcherTalon.set(ControlMode.PercentOutput,0);
@@ -72,18 +82,39 @@ public class NewLauncher extends CommandBase implements LauncherIF {
 
     @Override
     public void launch() {
-        _running = true;
+//        _running = true;
+        _shooterRunning = true;
+        fireWhenReady(500);
+        if(_launcherReady){
+            load();
+        }else{
+            stopLoader();
+        }
     }
 
+    public void fireWhenReady(double targetVelocity_){
+        runLauncher(targetVelocity_);
+        if(_shooterNeo.getRPM()>=targetVelocity_){ _launcherReady = true; }else{ _launcherReady = false; }
+    }
 
+    private void runLauncher(double shooterRPM_) {
+        _shooterRunning = true;
+        if (shooterRPM_ != 0) {
+            shooterRPM_ = shooterRPM_ / SHOOTER_UNITS_TO_RPM;
+            _shooterNeo.setRPM(shooterRPM_);
+        }
+        _shooterNeo.setRPM(0.0);
+    }
 
-    public void setRPM(double rpm) {
-        _setPoint = Math.min(rpm, MAX_RPM);
+    public void setLoaderPercentage(double percentage_) {
+        _setPoint = Math.min(percentage_, MAX_RPM);
     }
     public void stopLoader(){
 //        _loaderReady = false;
 //        _running = false;
         _launcherTalon.set(ControlMode.PercentOutput,0.0);
+        _shooterRunning = false;
+        _shooterNeo.setRPM(0.0);
 
     }
 

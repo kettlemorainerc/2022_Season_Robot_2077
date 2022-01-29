@@ -18,7 +18,7 @@ public class DriveStation {
     public final Joystick primaryStick_ = new Joystick(0);
     public final Joystick secondaryStick_ = new Joystick(1);
     public final Joystick testingStick_ = new Joystick(5);
-    public final Joystick Flight = new Joystick(2);
+//    public final Joystick Flight = new Joystick(2);
     
     private final List<Joystick> joysticks = new LinkedList<>();
     private final List<JoystickButton> buttons = new LinkedList<>();
@@ -41,7 +41,7 @@ public class DriveStation {
 
     private void bindTechnicalControl(Joystick testing) {
         useCommand(new LoadLauncher(), new JoystickButton(testing, 1));
-//        new JoystickButton(testing, 1).whileHeld(new LoadLauncher());
+        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
 
 //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
 //        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
