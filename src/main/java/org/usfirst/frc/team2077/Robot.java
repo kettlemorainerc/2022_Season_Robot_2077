@@ -99,8 +99,8 @@ public class Robot extends TimedRobot {
 
 
 		setupDriveTrain();
-//		robot_.chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
-//		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
+		robot_.chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
+		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
 //		robot_.crosshairs_.set(Math.atan2(-p.get(EAST), -p.get(NORTH)),
 //							   Math.sqrt(p.get(NORTH) * p.get(NORTH) + p.get(EAST) * p.get(EAST)));
 //
@@ -109,7 +109,7 @@ public class Robot extends TimedRobot {
 	}
 
 	public void setupDriveTrain() {
-//		chassis_ = new MecanumChassis();
+		chassis_ = new MecanumChassis();
 
 		//   These dummy subsystems support separate command ownership of robot motion and rotation.
 		position_ = new SubsystemBase() {
@@ -192,14 +192,13 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 
-		// autonomous_ = new AutonomousOperations();
 
-		// if (autonomous_ != null) {
-		//   autonomous_.schedule();
-		// }
-		if(driveStation_ != null) {
-			driveStation_.cancel();
-		}
+		 if (autonomous_ != null) {
+		   autonomous_.schedule();
+		 }
+//		if(driveStation_ != null) {
+//			driveStation_.cancel();
+//		}
 		autonomous_ = new AutonomousCheck();
 		autonomous_.schedule();
 	}

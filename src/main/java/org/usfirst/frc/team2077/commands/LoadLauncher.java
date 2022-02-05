@@ -5,13 +5,17 @@
 
 package org.usfirst.frc.team2077.commands;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
 
 public class LoadLauncher extends RepeatedCommand{
-  public LoadLauncher(){
+  Joystick _stick;
+
+  public LoadLauncher(Joystick stick_){
     addRequirements(robot_.newLauncher_);
+    this._stick = stick_;
   }
 
   @Override
@@ -21,7 +25,7 @@ public class LoadLauncher extends RepeatedCommand{
   @Override
   public void execute() {
     robot_.newLauncher_.setRunning(true);
-    robot_.newLauncher_.load();
+    robot_.newLauncher_.load(_stick.getY());
   }
 
   @Override

@@ -33,8 +33,7 @@ public class MecanumChassis extends AbstractChassis {
 		EnumMap<WheelPosition, DriveModuleIF> driveModule = new EnumMap<>(WheelPosition.class);
 
 		for(WheelPosition pos: WheelPosition.values()) {
-//			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));
-//			driveModule.put(pos, new TalonDriveModule(DrivePosition.forWheelPosition(pos)));//DrivePosition.forWheelPosition(pos)));
+			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));
 		}
 
 		return driveModule;

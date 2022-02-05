@@ -27,8 +27,8 @@ public class DriveStation {
     public DriveStation(Subsystem position_) {
         CommandScheduler.getInstance()
                         .setDefaultCommand(position_, new PrimaryStickDrive3Axis());
-//        bindDriverControl(primaryStick_);
-        bindTechnicalControl(primaryStick_/*testingStick_*/);
+        bindDriverControl(primaryStick_);
+        bindTechnicalControl(testingStick_);
     }
 
     private static void bindDriverControl(Joystick primary) {
@@ -40,8 +40,10 @@ public class DriveStation {
     }
 
     private void bindTechnicalControl(Joystick testing) {
-        useCommand(new LoadLauncher(), new JoystickButton(testing, 1));
-        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
+        useCommand(new LoadLauncher(testing), new JoystickButton(testing, 1));
+//        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
+
+//        new JoystickButton(testing, 1).whenPressed(new PrimaryStickDrive3Axis());
 
 //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
 //        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);

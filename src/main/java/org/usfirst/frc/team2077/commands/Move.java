@@ -22,7 +22,7 @@ public class Move extends CommandBase {
 	private final int method_; // 1 2 or 3 (#args to setVelocity/setRotation)
 
 	private double[] fast_; // {north, east, rotation} (signed)
-	private double[] slow_; // {north, east, rotation} (signed)
+	public double[] slow_; // {north, east, rotation} (signed)
 	private AccelerationLimits acceleration_; // like getAccelerationLimits, but scaled
 
 	private double[] distanceRemaining_; // {north, east, rotation} (signed)
@@ -48,6 +48,7 @@ public class Move extends CommandBase {
 	private Move(double north, double east, double rotation, int method, Subsystem... requirements) {
 
 		addRequirements(requirements);
+//		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
 		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
 		method_ = method;
 		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 DISTANCE:" +
@@ -163,10 +164,12 @@ public class Move extends CommandBase {
 */
 		switch(method_) {
 			case 3:
-				robot_.chassis_.setVelocity(vNew[0], vNew[1], vNew[2], acceleration_);
+//				robot_.chassis_.setVelocity(vNew[0], vNew[1], vNew[2], acceleration_);
+				robot_.chassis_.setVelocity(vNew[0], vNew[0], vNew[2], acceleration_);
 				break;
 			case 2:
-				robot_.chassis_.setVelocity(vNew[0], vNew[1], acceleration_);
+//				robot_.chassis_.setVelocity(vNew[0], vNew[1], acceleration_);
+				robot_.chassis_.setVelocity(vNew[0], vNew[0], acceleration_);
 				break;
 			case 1:
 				robot_.chassis_.setRotation(vNew[2], acceleration_);

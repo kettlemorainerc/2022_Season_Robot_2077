@@ -2,13 +2,14 @@ package org.usfirst.frc.team2077.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;
 import org.usfirst.frc.team2077.subsystems.LauncherIF;
 
 public class NewLauncher extends CommandBase implements LauncherIF {
     public static final double MAX_RPM = 5_000;
-    private TalonSRX _launcherTalon = new TalonSRX(2);
+    private TalonSRX _launcherTalon = new TalonSRX(6);
     private SparkNeoDriveModule _shooterNeo = new SparkNeoDriveModule(SparkNeoDriveModule.DrivePosition.SHOOTER);
     private double SHOOTER_UNITS_TO_RPM = 1;//(600 / 2048); //TODO: Fix this
     private double DEFAULT_LAUNCHING_SPEED = 600;
@@ -21,6 +22,8 @@ public class NewLauncher extends CommandBase implements LauncherIF {
     private boolean _launcherReady = false;
 
     private int printingi = 0;
+
+
 
     public NewLauncher() {
         _launcherTalon.configFactoryDefault();
@@ -55,12 +58,17 @@ public class NewLauncher extends CommandBase implements LauncherIF {
     }
 
     @Override
-    public void load() {
-        setLoaderPercentage(.2);
+    public void load() {}
+
+
+    public void load(double value_) {
+        setLoaderPercentage(-.3);
         _shooterRunning = true;
 
         if(_shooterRunning && true){//TODO: Make take a _setPoint
-            _shooterNeo.setRPM(DEFAULT_LAUNCHING_SPEED);
+//            _shooterNeo.setRPM(DEFAULT_LAUNCHING_SPEED);
+            _shooterNeo.setInverted(true);
+            _shooterNeo.setRPM(value_*100000);
         }
 
         if (_loaderRunning && _setPoint != 0) {

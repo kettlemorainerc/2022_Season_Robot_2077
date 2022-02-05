@@ -1,11 +1,10 @@
 package org.usfirst.frc.team2077.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.*;
 
 import java.time.Duration;
 
-import static org.usfirst.frc.team2077.Robot.robot_;
+import static org.usfirst.frc.team2077.Robot.*;
 
 public class SimulatedStickInput extends CommandBase {
 	private final Duration simulateFor;
@@ -37,20 +36,20 @@ public class SimulatedStickInput extends CommandBase {
 		robot_.chassis_.setGLimits(PrimaryStickDrive3Axis.ACCELERATION_G_LIMIT, PrimaryStickDrive3Axis.DECELERATION_G_LIMIT);
 
 		System.out.printf(
-			"[N%% | E%% | R%%][%s | %s | %s][Using R%%: %s]%n",
-			northThrottlePercent,
-			eastThrottlePercent,
-			rotationThrottlePercent,
-			CommandScheduler.getInstance().requiring(robot_.heading_) == null
+				"[N%% | E%% | R%%][%s | %s | %s][Using R%%: %s]%n",
+				northThrottlePercent,
+				eastThrottlePercent,
+				rotationThrottlePercent,
+				CommandScheduler.getInstance().requiring(robot_.heading_) == null
 		);
 
 		if(CommandScheduler.getInstance().requiring(robot_.heading_) != null) { // we don't control heading
 			robot_.chassis_.setVelocity01(northThrottlePercent, eastThrottlePercent);
 		} else { // we control heading
 			robot_.chassis_.setVelocity01(
-				northThrottlePercent,
-				eastThrottlePercent,
-				rotationThrottlePercent
+					northThrottlePercent,
+					eastThrottlePercent,
+					rotationThrottlePercent
 			);
 		}
 	}

@@ -14,23 +14,30 @@ public class AutonomousCheck extends SequentialCommandGroup{
     private boolean barrelRacing = false;
     private boolean slalom = false;
     private boolean bounce = false;
+    private boolean done = false;
 
     public void initialize(){
+        (new SequentialCommandGroup(
+                new Move(20,0.0)
+        )
+        ).schedule(true);
+        done = true;
     }
 
 
     @Override
     public void execute() {
-        runAuto = SmartDashboard.getBoolean("Run Autonomous", false);
+        runAuto = SmartDashboard.getBoolean("Run Autonomous", true);
 
-        if (runAuto || true) {
-            new SimulatedStickInput(1, 0, 0).schedule(true);
-            done = true;
-        }
+//        if (runAuto || true) {
+//            new SimulatedStickInput(.5, .5, .5).schedule(true);
+//            done = true;
+//        }
+
+
     }
 
-    private boolean done = false;
-    
+
     public void end(boolean interrupted) {
         super.end(interrupted);
         done = true;
@@ -39,7 +46,7 @@ public class AutonomousCheck extends SequentialCommandGroup{
         return done;
     }
 
-    public static void main(String[] args) {
-        (new AutonomousCheck()).initialize();
-    }
+//    public static void main(String[] args) {
+//        (new AutonomousCheck()).initialize();
+//    }
 }
