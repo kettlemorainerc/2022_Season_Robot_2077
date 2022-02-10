@@ -99,8 +99,8 @@ public class Robot extends TimedRobot {
 
 
 		setupDriveTrain();
-		robot_.chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
-		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
+		chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
+//		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
 //		robot_.crosshairs_.set(Math.atan2(-p.get(EAST), -p.get(NORTH)),
 //							   Math.sqrt(p.get(NORTH) * p.get(NORTH) + p.get(EAST) * p.get(EAST)));
 //
@@ -131,7 +131,7 @@ public class Robot extends TimedRobot {
 
 	public void setupController() {
 		// Container for remote control software objects.
-		driveStation_ = new DriveStation(position_);
+		driveStation_ = new DriveStation(position_, chassis_);
 	}
 
 	/**
