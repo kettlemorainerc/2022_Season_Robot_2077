@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
+import org.usfirst.frc.team2077.math.Position;
 
 import java.util.*;
 
@@ -18,17 +19,19 @@ public class DriveStation {
     public final Joystick primaryStick_ = new Joystick(0);
     public final Joystick secondaryStick_ = new Joystick(1);
     public final Joystick testingStick_ = new Joystick(5);
-//    public final Joystick Flight = new Joystick(2);
+    public final Joystick flight_ = new Joystick(2);
     
     private final List<Joystick> joysticks = new LinkedList<>();
     private final List<JoystickButton> buttons = new LinkedList<>();
     private final List<Subsystem> subsystems = new LinkedList<>();
 
     public DriveStation(Subsystem position_) {
-        CommandScheduler.getInstance()
-                        .setDefaultCommand(position_, new PrimaryStickDrive3Axis());
-        bindDriverControl(primaryStick_);
-        bindTechnicalControl(testingStick_);
+//        CommandScheduler.getInstance()
+        position_
+                .setDefaultCommand(new PrimaryStickDrive3Axis());
+//        bindDriverControl(primaryStick_);
+        bindDriverControl(flight_);
+        bindTechnicalControl(secondaryStick_);
     }
 
     private static void bindDriverControl(Joystick primary) {
@@ -39,8 +42,8 @@ public class DriveStation {
 
     }
 
-    private void bindTechnicalControl(Joystick testing) {
-        useCommand(new LoadLauncher(testing), new JoystickButton(testing, 1));
+    private void bindTechnicalControl(Joystick secondary_) {
+        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
 //        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
 
 //        new JoystickButton(testing, 1).whenPressed(new PrimaryStickDrive3Axis());

@@ -8,8 +8,9 @@ import static org.usfirst.frc.team2077.drivetrain.MecanumMath.WheelPosition.*;
 
 public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
     private static final double WHEEL_GEAR_RATIO = 10.714, WHEEL_RADIUS = 4;
-    private static final double LAUNCHER_WHEEL_RADIUS = 2, LAUNCHER_GEAR_RATIO = 1;
-    private static final int MAX_SHOOTER_RPM = 5400, MAX_WHEEL_RPM = 4500;
+    private static final double LAUNCHER_GEAR_RATIO = 1, LAUNCHER_WHEEL_RADIUS = 2;
+//    private static final int MAX_SHOOTER_RPM = 5400, MAX_WHEEL_RPM = 4500;
+    private static final int MAX_SHOOTER_RPM = 54000, MAX_WHEEL_RPM = 4500;
     private static final boolean USE_SOFTWARE_PID = true;
 
     public enum DrivePosition {
@@ -18,7 +19,7 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         BACK_LEFT(SOUTH_WEST, 4, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
         FRONT_LEFT(NORTH_WEST, 3, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
 
-        SHOOTER(null, 5, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM);        ;
+        SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_SHOOTER_RPM);        ;
 
         private final double gearRatio;
         private final double radius;

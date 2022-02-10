@@ -15,7 +15,7 @@ public abstract class RepeatedCommand extends BindableCommand {
 
     @Override
     public void bind(JoystickButton button){
-        button.whileHeld(this);
+        button.whileHeld(this,true);
     }
 
 }
