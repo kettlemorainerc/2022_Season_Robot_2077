@@ -1,0 +1,1332 @@
+[33mcommit 385415760d240e8e1602b725a6bdc98968e1638a[m[33m ([m[1;36mHEAD -> [m[1;32mupdates[m[33m)[m
+Author: AJ Memmel <averyparanoiduser@gmail.com>
+Date:   Thu Jan 27 19:30:37 2022 -0600
+
+    Fixed Veradrops, bringing from updates branch.
+
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/DriveStation.java b/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[1mindex c324703..b328fa1 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[36m@@ -10,7 +10,6 @@[m [mimport edu.wpi.first.wpilibj2.command.CommandScheduler;[m
+ import edu.wpi.first.wpilibj2.command.Subsystem;[m
+ import edu.wpi.first.wpilibj2.command.button.*;[m
+ import org.usfirst.frc.team2077.commands.*;[m
+[31m-import org.usfirst.frc.team2077.subsystems.Crosshairs;[m
+ [m
+ import java.util.*;[m
+ [m
+[36m@@ -41,11 +40,11 @@[m [mpublic class DriveStation {[m
+     }[m
+ [m
+     private void bindTechnicalControl(Joystick testing) {[m
+[31m-//        new JoystickButton(testing, 4).whileHeld(new LoadLauncher());[m
+[32m+[m[32m        new JoystickButton(testing, 1).whileHeld(new LoadLauncher());[m
+ //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());[m
+ //        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);[m
+ //        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);[m
+[31m-//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);[m
+[32m+[m[32m//        new JoystickButton(testing, 1).whenHeld(new NewLauncher(),true);[m
+ [m
+     }[m
+ [m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/Robot.java b/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[1mindex 944ead2..3dcacf8 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[36m@@ -16,6 +16,7 @@[m [mimport edu.wpi.first.wpilibj2.command.CommandScheduler;[m
+ import edu.wpi.first.wpilibj2.command.Subsystem;[m
+ import edu.wpi.first.wpilibj2.command.SubsystemBase;[m
+ import org.usfirst.frc.team2077.commands.AutonomousCheck;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.commands.NewLauncher;[m
+ import org.usfirst.frc.team2077.drivetrain.*;[m
+ import org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection;[m
+ import org.usfirst.frc.team2077.sensors.*;[m
+[36m@@ -65,6 +66,7 @@[m [mpublic class Robot extends TimedRobot {[m
+ 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name[m
+ 	// public Telemetry telemetry_;[m
+ 	public Launcher testLauncher_; // low-level control for testing[m
+[32m+[m	[32mpublic NewLauncher newLauncher_; // low-level control for testing[m
+ 	// Default commands[m
+ 	//    Autonomous selected via drive station dashboard.[m
+ 	protected Command autonomous_;[m
+[36m@@ -119,6 +121,8 @@[m [mpublic class Robot extends TimedRobot {[m
+ 		launcher_ = new Launcher();[m
+ 		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;[m
+ [m
+[32m+[m		[32mnewLauncher_ = new NewLauncher();[m
+[32m+[m
+ //		simpleDriveSubsys_ = new SimpleDriveSubsys();[m
+ //		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;[m
+ [m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java b/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java[m
+[1mindex 23d6508..a7432ac 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java[m
+[36m@@ -11,21 +11,22 @@[m [mimport static org.usfirst.frc.team2077.Robot.robot_;[m
+ [m
+ public class LoadLauncher extends CommandBase {[m
+   public LoadLauncher(){[m
+[31m-    addRequirements(robot_.testLauncher_);[m
+[32m+[m[32m    addRequirements(robot_.newLauncher_);[m
+   }[m
+ [m
+   @Override[m
+   public void initialize() {[m
+[32m+[m[32m    robot_.newLauncher_.setRunning(true);[m
+   }[m
+ [m
+   @Override[m
+   public void execute() {[m
+[31m-    robot_.testLauncher_.runLoader(.2);[m
+[32m+[m[32m    robot_.newLauncher_.load();[m
+   }[m
+ [m
+   @Override[m
+   public void end(boolean interrupted) {[m
+[31m-    robot_.testLauncher_.stopLoader();[m
+[32m+[m[32m    robot_.newLauncher_.stopLoader();[m
+   }[m
+ [m
+   @Override[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/NewLauncher.java b/src/main/java/org/usfirst/frc/team2077/commands/NewLauncher.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..f911f17[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/NewLauncher.java[m
+[36m@@ -0,0 +1,96 @@[m
+[32m+[m[32mpackage org.usfirst.frc.team2077.commands;[m
+[32m+[m
+[32m+[m[32mimport com.ctre.phoenix.motorcontrol.ControlMode;[m
+[32m+[m[32mimport com.ctre.phoenix.motorcontrol.can.TalonSRX;[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.CommandBase;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.subsystems.LauncherIF;[m
+[32m+[m
+[32m+[m[32mpublic class NewLauncher extends CommandBase implements LauncherIF {[m
+[32m+[m[32m    public static final double MAX_RPM = 5_000;[m
+[32m+[m[32m    private TalonSRX _launcherTalon = new TalonSRX(2);[m
+[32m+[m[32m    private SparkNeoDriveModule _launcherSpark = new SparkNeoDriveModule(2);[m
+[32m+[m
+[32m+[m[32m    //More in use            DEFAULTS[m
+[32m+[m[32m    private double _setPoint = 0.0;[m
+[32m+[m[32m    private boolean _running = false;[m
+[32m+[m[32m    private boolean _loaded = false;[m
+[32m+[m[32m    private boolean _loaderReady = false;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    public NewLauncher() {[m
+[32m+[m[32m        _launcherTalon.configFactoryDefault();[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void execute() {[m
+[32m+[m[32m        _launcherTalon.set(ControlMode.PercentOutput, _setPoint);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean setRangeUpper(double range) {[m
+[32m+[m[32m        return false;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean setRangeLower(double range) {[m
+[32m+[m[32m        return false;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void setRunning(boolean running) {[m
+[32m+[m[32m        _running = running;[m
+[32m+[m[32m        if(_running)[m
+[32m+[m[32m            _launcherTalon.set(ControlMode.PercentOutput, _setPoint);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean isRunning() {[m
+[32m+[m[32m        return _running;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void load() {[m
+[32m+[m[32m        setRPM(.50);[m
+[32m+[m[32m        if (_running && _setPoint != 0) {[m
+[32m+[m[32m            _launcherTalon.set(ControlMode.PercentOutput,_setPoint);[m
+[32m+[m[32m        } else {[m
+[32m+[m[32m            _launcherTalon.set(ControlMode.PercentOutput,0);[m
+[32m+[m[32m        }[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean isLoaded() {[m
+[32m+[m[32m        return _loaded;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean isReady() {[m
+[32m+[m[32m        return false;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void launch() {[m
+[32m+[m[32m        _running = true;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    public void setRPM(double rpm) {[m
+[32m+[m[32m        _setPoint = Math.min(rpm, MAX_RPM);[m
+[32m+[m[32m    }[m
+[32m+[m[32m    public void stopLoader(){[m
+[32m+[m[32m//        _loaderReady = false;[m
+[32m+[m[32m//        _running = false;[m
+[32m+[m[32m        _launcherTalon.set(ControlMode.PercentOutput,0.0);[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m
+[32m+[m[32m}[m
+\ No newline at end of file[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/drivetrain/SparkNeoDriveModule.java b/src/main/java/org/usfirst/frc/team2077/drivetrain/SparkNeoDriveModule.java[m
+[1mindex 3bbbf1a..511b961 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/drivetrain/SparkNeoDriveModule.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/drivetrain/SparkNeoDriveModule.java[m
+[36m@@ -18,9 +18,9 @@[m [mpublic class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {[m
+         BACK_LEFT(SOUTH_WEST, 4, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),[m
+         FRONT_LEFT(NORTH_WEST, 1, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),[m
+ [m
+[31m-        LEFT_SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM),[m
+[31m-        RIGHT_SHOOTER(null, 6, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM)[m
+[31m-        ;[m
+[32m+[m[32m//        LEFT_SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM),[m
+[32m+[m[32m//        RIGHT_SHOOTER(null, 6, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM)[m
+[32m+[m[32m        SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_WHEEL_RPM);        ;[m
+ [m
+         private final double gearRatio;[m
+         private final double radius;[m
+[36m@@ -69,7 +69,7 @@[m [mpublic class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {[m
+         pidController = this.getPIDController();[m
+         encoder = this.getEncoder();[m
+ [m
+[31m-        if(USE_SOFTWARE_PID || position == DrivePosition.LEFT_SHOOTER || position == DrivePosition.RIGHT_SHOOTER) {[m
+[32m+[m[32m        if(USE_SOFTWARE_PID || position == DrivePosition.SHOOTER) {[m
+             pidController.setP(position.P);[m
+             pidController.setI(position.I);[m
+             pidController.setD(position.D);[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/subsystems/Launcher.java b/src/main/java/org/usfirst/frc/team2077/subsystems/Launcher.java[m
+[1mindex 937dc99..c42c1d2 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/subsystems/Launcher.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/subsystems/Launcher.java[m
+[36m@@ -161,11 +161,11 @@[m [mpublic class Launcher extends SubsystemBase implements LauncherIF {[m
+ [m
+     @Override[m
+     public void load() {[m
+[31m-        // if (!isLoaded()) {[m
+[31m-        //     loader_.set(ControlMode.PercentOutput,1);[m
+[31m-        // } else {[m
+[31m-        //     loader_.set(ControlMode.PercentOutput,0);[m
+[31m-        // }[m
+[32m+[m[32m         if (!isLoaded()) {[m
+[32m+[m[32m             loader_.set(ControlMode.PercentOutput,1);[m
+[32m+[m[32m         } else {[m
+[32m+[m[32m             loader_.set(ControlMode.PercentOutput,0);[m
+[32m+[m[32m         }[m
+     }[m
+ [m
+     @Override[m
+[36m@@ -253,17 +253,17 @@[m [mpublic class Launcher extends SubsystemBase implements LauncherIF {[m
+ [m
+ [m
+     public void runLoader(double speed) {[m
+[31m-//        loader_.set(ControlMode.PercentOutput,-speed);[m
+[32m+[m[32m        loader_.set(ControlMode.PercentOutput,-speed);[m
+     }[m
+ [m
+     public void stopLoader() {[m
+[31m-//        loader_.set(ControlMode.PercentOutput,0.0);[m
+[32m+[m[32m        loader_.set(ControlMode.PercentOutput,0.0);[m
+     }[m
+ [m
+     public void stopAll() {[m
+ //        shooterL_.setVelocity(0.0);[m
+ //        shooterR_.setVelocity(0.0);[m
+[31m-//        loader_.set(ControlMode.PercentOutput,0.0);[m
+[32m+[m[32m        loader_.set(ControlMode.PercentOutput,0.0);[m
+ //        screw_.set(ControlMode.PercentOutput,0.0);[m
+     }[m
+ [m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/subsystems/SimpleDriveSubsys.java b/src/main/java/org/usfirst/frc/team2077/subsystems/SimpleDriveSubsys.java[m
+[1mindex 833e511..4f9d819 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/subsystems/SimpleDriveSubsys.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/subsystems/SimpleDriveSubsys.java[m
+[36m@@ -20,7 +20,7 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ //    private final SparkNeoDriveModule shooterL_;[m
+ //    private final SparkNeoDriveModule shooterR_;[m
+ //    private final TalonSRX loader_;[m
+[31m-//    private TalonSRX loader_;[m
+[32m+[m[32m    private TalonSRX loader_;[m
+ [m
+ [m
+     // elevation screw[m
+[36m@@ -66,8 +66,8 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ //        screw_ = new TalonSRX(1);[m
+ //        screw_.configFactoryDefault();[m
+ [m
+[31m-//       TalonSRX loader_ = new TalonSRX(2);[m
+[31m-//        loader_.configFactoryDefault();[m
+[32m+[m[32m       TalonSRX loader_ = new TalonSRX(2);[m
+[32m+[m[32m        loader_.configFactoryDefault();[m
+ [m
+ //        shooterL_ = new SparkNeoDriveModule(SparkNeoDriveModule.DrivePosition.LEFT_SHOOTER); //0[m
+ //[m
+[36m@@ -80,11 +80,10 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ [m
+     @Override[m
+     public void periodic() {[m
+[31m-//        loader_.set(ControlMode.PercentOutput, .4 * screwDirection_);[m
+[32m+[m[32m        loader_.set(ControlMode.PercentOutput, .4 * screwDirection_);[m
+     }[m
+ [m
+ [m
+[31m-[m
+     @Override[m
+     public boolean setRangeLower(double range) {[m
+         return false;[m
+[36m@@ -101,8 +100,8 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ [m
+     @Override[m
+     public void setRunning(boolean running) {[m
+[31m-//        launcherRunning_ = running;[m
+[31m-//        runLauncher(launcherRunning_ ? launcherRPM_ : 0);[m
+[32m+[m[32m        launcherRunning_ = running;[m
+[32m+[m[32m        runLauncher(launcherRunning_ ? launcherRPM_ : 0);[m
+     }[m
+ [m
+     @Override[m
+[36m@@ -121,11 +120,11 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ [m
+     @Override[m
+     public void load() {[m
+[31m-        // if (!isLoaded()) {[m
+[31m-        //     loader_.set(ControlMode.PercentOutput,1);[m
+[31m-        // } else {[m
+[31m-        //     loader_.set(ControlMode.PercentOutput,0);[m
+[31m-        // }[m
+[32m+[m[32m         if (!isLoaded()) {[m
+[32m+[m[32m             loader_.set(ControlMode.PercentOutput,1);[m
+[32m+[m[32m         } else {[m
+[32m+[m[32m             loader_.set(ControlMode.PercentOutput,0);[m
+[32m+[m[32m         }[m
+     }[m
+ [m
+     @Override[m
+[36m@@ -140,13 +139,13 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ [m
+     @Override[m
+     public void launch() {[m
+[31m-//        // if (isLoaded()) {[m
+[32m+[m[32m        // if (isLoaded()) {[m
+ //        setRangeUpper(robot_.crosshairs_.getRange());[m
+[31m-//        setRunning(true);[m
+[31m-////        if (isReady()) {[m
+[31m-////            runLoader(0.6);[m
+[31m-////[m
+[31m-////        }[m
+[32m+[m[32m        setRunning(true);[m
+[32m+[m[32m        if (isReady()) {[m
+[32m+[m[32m            runLoader(0.6);[m
+[32m+[m
+[32m+[m[32m        }[m
+     }[m
+ [m
+     public void stopLaunch() {[m
+[36m@@ -178,16 +177,17 @@[m [mpublic class SimpleDriveSubsys extends SubsystemBase implements LauncherIF {[m
+ [m
+ [m
+     private void runLauncher(double velocity) {[m
+[31m-//        double leftRPM = 0;[m
+[31m-//        double rightRPM = 0;[m
+[31m-//        if (velocity != 0) {[m
+[31m-//            double bias = velocity * rightLeftBias / 2.;[m
+[31m-//[m
+[31m-//            leftRPM = (velocity - bias) / unitsToRPM;[m
+[31m-//            rightRPM = (velocity + bias) / unitsToRPM;[m
+[31m-//        }[m
+[32m+[m[32m        double leftRPM = 0;[m
+[32m+[m[32m        double rightRPM = 0;[m
+[32m+[m[32m        if (velocity != 0) {[m
+[32m+[m[32m            double bias = velocity * rightLeftBias / 2.;[m
+[32m+[m
+[32m+[m[32m            leftRPM = (velocity - bias) / unitsToRPM;[m
+[32m+[m[32m            rightRPM = (velocity + bias) / unitsToRPM;[m
+[32m+[m[32m        }[m
+ //        shooterL_.setRPM(leftRPM);[m
+ //        shooterR_.setRPM(rightRPM);[m
+[32m+[m
+     }[m
+ [m
+ //    @Deprecated[m
+[1mdiff --git a/src/test/java/org/usfirst/frc/team2077/drivetrain/MecanumMathTest.java b/src/test/java/org/usfirst/frc/team2077/drivetrain/MecanumMathTest.java[m
+[1mindex 5314745..14b6075 100644[m
+[1m--- a/src/test/java/org/usfirst/frc/team2077/drivetrain/MecanumMathTest.java[m
+[1m+++ b/src/test/java/org/usfirst/frc/team2077/drivetrain/MecanumMathTest.java[m
+[36m@@ -17,7 +17,7 @@[m [mpublic class MecanumMathTest {[m
+         velocities.put(WheelPosition.SOUTH_WEST, southWest);[m
+         velocities.put(WheelPosition.NORTH_WEST, northWest);[m
+         return velocities;[m
+[31m-//        return new double[] {northEast, southEast, southWest, northWest} ;[m
+[32m+[m[32m        //        return new double[] {northEast, southEast, southWest, northWest} ;[m
+     }[m
+     [m
+     public static EnumMap<VelocityDirection, Double> botVelocity(double north, double east, double rotation) {[m
+
+[33mcommit 29dc72d543cc9f6851f3cc21e9ea0bb4e070d773[m[33m ([m[1;31morigin/updates[m[33m)[m
+Author: David Faris <dfaris@my.wctc.edu>
+Date:   Tue Jan 25 20:52:01 2022 -0600
+
+    Update Phoenix vendordeps to the 2021 vendordeps jsong
+
+[1mdiff --git a/vendordeps/Phoenix.json b/vendordeps/Phoenix.json[m
+[1mindex 87f03cb..789d831 100644[m
+[1m--- a/vendordeps/Phoenix.json[m
+[1m+++ b/vendordeps/Phoenix.json[m
+[36m@@ -1,29 +1,30 @@[m
+ {[m
+     "fileName": "Phoenix.json",[m
+     "name": "CTRE-Phoenix",[m
+[31m-    "version": "5.19.4",[m
+[32m+[m[32m    "version": "5.20.2",[m
+[32m+[m[32m    "frcYear": 2022,[m
+     "uuid": "ab676553-b602-441f-a38d-f1296eff6537",[m
+     "mavenUrls": [[m
+[31m-        "https://devsite.ctr-electronics.com/maven/release/"[m
+[32m+[m[32m        "https://maven.ctr-electronics.com/release/"[m
+     ],[m
+[31m-    "jsonUrl": "https://devsite.ctr-electronics.com/maven/release/com/ctre/phoenix/Phoenix-latest.json",[m
+[32m+[m[32m    "jsonUrl": "https://maven.ctr-electronics.com/release/com/ctre/phoenix/Phoenix-frc2022-latest.json",[m
+     "javaDependencies": [[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "api-java",[m
+[31m-            "version": "5.19.4"[m
+[32m+[m[32m            "version": "5.20.2"[m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "wpiapi-java",[m
+[31m-            "version": "5.19.4"[m
+[32m+[m[32m            "version": "5.20.2"[m
+         }[m
+     ],[m
+     "jniDependencies": [[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "cci",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "isJar": false,[m
+             "skipInvalidPlatforms": true,[m
+             "validPlatforms": [[m
+[36m@@ -33,7 +34,7 @@[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+             "artifactId": "cci-sim",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "isJar": false,[m
+             "skipInvalidPlatforms": true,[m
+             "validPlatforms": [[m
+[36m@@ -45,7 +46,19 @@[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+             "artifactId": "simTalonSRX",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "isJar": false,[m
+[32m+[m[32m            "skipInvalidPlatforms": true,[m
+[32m+[m[32m            "validPlatforms": [[m
+[32m+[m[32m                "windowsx86-64",[m
+[32m+[m[32m                "linuxx86-64",[m
+[32m+[m[32m                "osxx86-64"[m
+[32m+[m[32m            ][m
+[32m+[m[32m        },[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simTalonFX",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "isJar": false,[m
+             "skipInvalidPlatforms": true,[m
+             "validPlatforms": [[m
+[36m@@ -57,7 +70,31 @@[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+             "artifactId": "simVictorSPX",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "isJar": false,[m
+[32m+[m[32m            "skipInvalidPlatforms": true,[m
+[32m+[m[32m            "validPlatforms": [[m
+[32m+[m[32m                "windowsx86-64",[m
+[32m+[m[32m                "linuxx86-64",[m
+[32m+[m[32m                "osxx86-64"[m
+[32m+[m[32m            ][m
+[32m+[m[32m        },[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simPigeonIMU",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "isJar": false,[m
+[32m+[m[32m            "skipInvalidPlatforms": true,[m
+[32m+[m[32m            "validPlatforms": [[m
+[32m+[m[32m                "windowsx86-64",[m
+[32m+[m[32m                "linuxx86-64",[m
+[32m+[m[32m                "osxx86-64"[m
+[32m+[m[32m            ][m
+[32m+[m[32m        },[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simCANCoder",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "isJar": false,[m
+             "skipInvalidPlatforms": true,[m
+             "validPlatforms": [[m
+[36m@@ -71,40 +108,34 @@[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "wpiapi-cpp",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "libName": "CTRE_Phoenix_WPI",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+[31m-                "linuxathena",[m
+[31m-                "windowsx86-64",[m
+[31m-                "linuxx86-64",[m
+[31m-                "osxx86-64"[m
+[32m+[m[32m                "linuxathena"[m
+             ][m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "api-cpp",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "libName": "CTRE_Phoenix",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+[31m-                "linuxathena",[m
+[31m-                "windowsx86-64",[m
+[31m-                "linuxx86-64",[m
+[31m-                "osxx86-64"[m
+[32m+[m[32m                "linuxathena"[m
+             ][m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix",[m
+             "artifactId": "cci",[m
+[31m-            "version": "5.19.4",[m
+[32m+[m[32m            "version": "5.20.2",[m
+             "libName": "CTRE_PhoenixCCI",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+                 "linuxathena"[m
+[36m@@ -112,11 +143,11 @@[m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+[31m-            "artifactId": "cci-sim",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_PhoenixCCISim",[m
+[32m+[m[32m            "artifactId": "wpiapi-cpp-sim",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_Phoenix_WPISim",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+                 "windowsx86-64",[m
+[36m@@ -125,27 +156,26 @@[m
+             ][m
+         },[m
+         {[m
+[31m-            "groupId": "com.ctre.phoenix",[m
+[31m-            "artifactId": "diagnostics",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_PhoenixDiagnostics",[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "api-cpp-sim",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_PhoenixSim",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+[31m-                "linuxathena",[m
+                 "windowsx86-64",[m
+                 "linuxx86-64",[m
+                 "osxx86-64"[m
+             ][m
+         },[m
+         {[m
+[31m-            "groupId": "com.ctre.phoenix",[m
+[31m-            "artifactId": "canutils",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_PhoenixCanutils",[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "cci-sim",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_PhoenixCCISim",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+                 "windowsx86-64",[m
+[36m@@ -154,12 +184,12 @@[m
+             ][m
+         },[m
+         {[m
+[31m-            "groupId": "com.ctre.phoenix",[m
+[31m-            "artifactId": "platform-sim",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_PhoenixPlatform",[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simTalonSRX",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_SimTalonSRX",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+                 "windowsx86-64",[m
+[36m@@ -168,15 +198,14 @@[m
+             ][m
+         },[m
+         {[m
+[31m-            "groupId": "com.ctre.phoenix",[m
+[31m-            "artifactId": "core",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_PhoenixCore",[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simTalonFX",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_SimTalonFX",[m
+             "headerClassifier": "headers",[m
+[31m-            "sharedLibrary": false,[m
+[32m+[m[32m            "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+             "binaryPlatforms": [[m
+[31m-                "linuxathena",[m
+                 "windowsx86-64",[m
+                 "linuxx86-64",[m
+                 "osxx86-64"[m
+[36m@@ -184,9 +213,9 @@[m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+[31m-            "artifactId": "simTalonSRX",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_SimTalonSRX",[m
+[32m+[m[32m            "artifactId": "simVictorSPX",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_SimVictorSPX",[m
+             "headerClassifier": "headers",[m
+             "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+[36m@@ -198,9 +227,23 @@[m
+         },[m
+         {[m
+             "groupId": "com.ctre.phoenix.sim",[m
+[31m-            "artifactId": "simVictorSPX",[m
+[31m-            "version": "5.19.4",[m
+[31m-            "libName": "CTRE_SimVictorSPX",[m
+[32m+[m[32m            "artifactId": "simPigeonIMU",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_SimPigeonIMU",[m
+[32m+[m[32m            "headerClassifier": "headers",[m
+[32m+[m[32m            "sharedLibrary": true,[m
+[32m+[m[32m            "skipInvalidPlatforms": true,[m
+[32m+[m[32m            "binaryPlatforms": [[m
+[32m+[m[32m                "windowsx86-64",[m
+[32m+[m[32m                "linuxx86-64",[m
+[32m+[m[32m                "osxx86-64"[m
+[32m+[m[32m            ][m
+[32m+[m[32m        },[m
+[32m+[m[32m        {[m
+[32m+[m[32m            "groupId": "com.ctre.phoenix.sim",[m
+[32m+[m[32m            "artifactId": "simCANCoder",[m
+[32m+[m[32m            "version": "5.20.2",[m
+[32m+[m[32m            "libName": "CTRE_SimCANCoder",[m
+             "headerClassifier": "headers",[m
+             "sharedLibrary": true,[m
+             "skipInvalidPlatforms": true,[m
+
+[33mcommit 474457973f7b49ab83f6a76adc90eceffef40c77[m
+Author: David Faris <dfaris@my.wctc.edu>
+Date:   Tue Jan 25 20:51:42 2022 -0600
+
+    Add task that shows various dependency files. Add some simple idea configuration
+
+[1mdiff --git a/build.gradle b/build.gradle[m
+[1mindex 6759e2c..5237c50 100644[m
+[1m--- a/build.gradle[m
+[1m+++ b/build.gradle[m
+[36m@@ -1,6 +1,13 @@[m
+ plugins {[m
+     id "java"[m
+     id "edu.wpi.first.GradleRIO" version "2022.2.1"[m
+[32m+[m[32m    id 'idea'[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32midea {[m
+[32m+[m[32m    module {[m
+[32m+[m[32m        downloadSources = true[m
+[32m+[m[32m    }[m
+ }[m
+ [m
+ sourceCompatibility = JavaVersion.VERSION_11[m
+[36m@@ -95,4 +102,25 @@[m [mtest {[m
+     testLogging.showStandardStreams = true[m
+     testLogging.showStackTraces = true[m
+     testLogging.exceptionFormat = "full"[m
+[32m+[m[32m}[m
+[32m+[m
+[32m+[m[32mtask stuff {[m
+[32m+[m[32m    doLast {[m
+[32m+[m[32m        def processDep;[m
+[32m+[m[32m        processDep = {File f ->[m
+[32m+[m[32m//            logger.lifecycle(f.absolutePath)[m
+[32m+[m[32m            if(f.name.endsWith(".jar") || f.name.endsWith(".zip")) {[m
+[32m+[m[32m                zipTree(f).forEach {[m
+[32m+[m[32m//                    logger.lifecycle("ZIP TREE ${it.absolutePath}")[m
+[32m+[m[32m                    processDep(it)[m
+[32m+[m[32m                }[m
+[32m+[m[32m            } else if([m
+[32m+[m[32m                f.name.contains(".so") ||[m
+[32m+[m[32m                f.name.toLowerCase().contains("network")[m
+[32m+[m[32m            ) logger.lifecycle(f.absolutePath);[m
+[32m+[m[32m        }[m
+[32m+[m[32m        configurations.nativeRelease.forEach(processDep)[m
+[32m+[m[32m        configurations.runtimeClasspath.forEach(processDep)[m
+[32m+[m[32m        configurations.roborioRelease.forEach(processDep)[m
+[32m+[m[32m    }[m
+ }[m
+\ No newline at end of file[m
+
+[33mcommit b51da71d50e5c795b8b8a188e67ed77fa1c411c5[m
+Author: David Faris <dfaris@my.wctc.edu>
+Date:   Tue Jan 25 20:51:08 2022 -0600
+
+    Remove unecessary vendordeps files
+
+[1mdiff --git a/vendordeps/WPILibOldCommands.json b/vendordeps/WPILibOldCommands.json[m
+[1mdeleted file mode 100644[m
+[1mindex acc8879..0000000[m
+[1m--- a/vendordeps/WPILibOldCommands.json[m
+[1m+++ /dev/null[m
+[36m@@ -1,37 +0,0 @@[m
+[31m-{[m
+[31m-    "fileName": "WPILibOldCommands.json",[m
+[31m-    "name": "WPILib-Old-Commands",[m
+[31m-    "version": "2020.0.0",[m
+[31m-    "uuid": "b066afc2-5c18-43c4-b758-43381fcb275e",[m
+[31m-    "mavenUrls": [],[m
+[31m-    "jsonUrl": "",[m
+[31m-    "javaDependencies": [[m
+[31m-        {[m
+[31m-            "groupId": "edu.wpi.first.wpilibOldCommands",[m
+[31m-            "artifactId": "wpilibOldCommands-java",[m
+[31m-            "version": "wpilib"[m
+[31m-        }[m
+[31m-    ],[m
+[31m-    "jniDependencies": [],[m
+[31m-    "cppDependencies": [[m
+[31m-        {[m
+[31m-            "groupId": "edu.wpi.first.wpilibOldCommands",[m
+[31m-            "artifactId": "wpilibOldCommands-cpp",[m
+[31m-            "version": "wpilib",[m
+[31m-            "libName": "wpilibOldCommands",[m
+[31m-            "headerClassifier": "headers",[m
+[31m-            "sourcesClassifier": "sources",[m
+[31m-            "sharedLibrary": true,[m
+[31m-            "skipInvalidPlatforms": true,[m
+[31m-            "binaryPlatforms": [[m
+[31m-                "linuxathena",[m
+[31m-                "linuxraspbian",[m
+[31m-                "linuxaarch64bionic",[m
+[31m-                "windowsx86-64",[m
+[31m-                "windowsx86",[m
+[31m-                "linuxx86-64",[m
+[31m-                "osxx86-64"[m
+[31m-            ][m
+[31m-        }[m
+[31m-    ][m
+[31m-}[m
+\ No newline at end of file[m
+[1mdiff --git a/vendordeps/_WPILibNewCommands.json b/vendordeps/_WPILibNewCommands.json[m
+[1mdeleted file mode 100644[m
+[1mindex d7bd9b0..0000000[m
+[1m--- a/vendordeps/_WPILibNewCommands.json[m
+[1m+++ /dev/null[m
+[36m@@ -1,37 +0,0 @@[m
+[31m-{[m
+[31m-  "fileName": "WPILibNewCommands.json",[m
+[31m-  "name": "WPILib-New-Commands",[m
+[31m-  "version": "2020.0.0",[m
+[31m-  "uuid": "111e20f7-815e-48f8-9dd6-e675ce75b266",[m
+[31m-  "mavenUrls": [],[m
+[31m-  "jsonUrl": "",[m
+[31m-  "javaDependencies": [[m
+[31m-      {[m
+[31m-          "groupId": "edu.wpi.first.wpilibNewCommands",[m
+[31m-          "artifactId": "wpilibNewCommands-java",[m
+[31m-          "version": "wpilib"[m
+[31m-      }[m
+[31m-  ],[m
+[31m-  "jniDependencies": [],[m
+[31m-  "cppDependencies": [[m
+[31m-      {[m
+[31m-          "groupId": "edu.wpi.first.wpilibNewCommands",[m
+[31m-          "artifactId": "wpilibNewCommands-cpp",[m
+[31m-          "version": "wpilib",[m
+[31m-          "libName": "wpilibNewCommands",[m
+[31m-          "headerClassifier": "headers",[m
+[31m-          "sourcesClassifier": "sources",[m
+[31m-          "sharedLibrary": true,[m
+[31m-          "skipInvalidPlatforms": true,[m
+[31m-          "binaryPlatforms": [[m
+[31m-              "linuxathena",[m
+[31m-              "linuxraspbian",[m
+[31m-              "linuxaarch64bionic",[m
+[31m-              "windowsx86-64",[m
+[31m-              "windowsx86",[m
+[31m-              "linuxx86-64",[m
+[31m-              "osxx86-64"[m
+[31m-          ][m
+[31m-      }[m
+[31m-  ][m
+[31m-}[m
+
+[33mcommit 05357cf1c3b81ebc2c19025b178ba07e92d22de1[m
+Author: AJ Memmel <averyparanoiduser@gmail.com>
+Date:   Tue Jan 25 19:56:03 2022 -0600
+
+    Demonstration of what is wrong with TALONSRX, the file shown in Discord goes to the file Launcher.java by the //@@@
+
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/DriveStation.java b/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[1mindex 65dd6f9..c324703 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/DriveStation.java[m
+[36m@@ -29,18 +29,23 @@[m [mpublic class DriveStation {[m
+         CommandScheduler.getInstance()[m
+                         .setDefaultCommand(position_, new PrimaryStickDrive3Axis());[m
+ //        bindDriverControl(primaryStick_);[m
+[31m-        bindTechnicalControl(testingStick_);[m
+[32m+[m[32m        bindTechnicalControl(primaryStick_/*testingStick_*/);[m
+     }[m
+ [m
+     private static void bindDriverControl(Joystick primary) {[m
+         JoystickButton primaryTrigger = new JoystickButton(primary, 1);[m
+ [m
+ //        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());[m
+[32m+[m[32m//        new JoystickButton(primary, 0).whenPressed(new PrimaryStickDrive3Axis());[m
+[32m+[m
+     }[m
+ [m
+     private void bindTechnicalControl(Joystick testing) {[m
+[32m+[m[32m//        new JoystickButton(testing, 4).whileHeld(new LoadLauncher());[m
+ //        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());[m
+[31m-        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);[m
+[32m+[m[32m//        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);[m
+[32m+[m[32m//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);[m
+[32m+[m[32m//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);[m
+ [m
+     }[m
+ [m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/Robot.java b/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[1mindex 4296f8f..944ead2 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/Robot.java[m
+[36m@@ -58,10 +58,13 @@[m [mpublic class Robot extends TimedRobot {[m
+ //	public Crosshairs crosshairs_;[m
+ 	//    Ball launcher with ajustable elevation and speed based on range to target.[m
+ //	public LauncherIF launcher_;[m
+[32m+[m	[32mpublic SimpleDriveSubsys simpleDriveSubsys_;[m
+[32m+[m	[32mpublic LauncherIF launcher_;[m
+ [m
+ [m
+ 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name[m
+ 	// public Telemetry telemetry_;[m
+[32m+[m	[32mpublic Launcher testLauncher_; // low-level control for testing[m
+ 	// Default commands[m
+ 	//    Autonomous selected via drive station dashboard.[m
+ 	protected Command autonomous_;[m
+[36m@@ -113,6 +116,12 @@[m [mpublic class Robot extends TimedRobot {[m
+ 		};[m
+ 		// telemetry_ = new Telemetry();[m
+ [m
+[32m+[m		[32mlauncher_ = new Launcher();[m
+[32m+[m		[32mtestLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;[m
+[32m+[m
+[32m+[m[32m//		simpleDriveSubsys_ = new SimpleDriveSubsys();[m
+[32m+[m[32m//		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;[m
+[32m+[m
+ //		crosshairs_ = new Crosshairs();[m
+ 	}[m
+ [m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/AutonomousCheck.java b/src/main/java/org/usfirst/frc/team2077/commands/AutonomousCheck.java[m
+[1mindex 546032d..29465b7 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/commands/AutonomousCheck.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/AutonomousCheck.java[m
+[36m@@ -23,8 +23,8 @@[m [mpublic class AutonomousCheck extends SequentialCommandGroup{[m
+     public void execute() {[m
+         runAuto = SmartDashboard.getBoolean("Run Autonomous", false);[m
+ [m
+[31m-        if (runAuto) {[m
+[31m-//            new SimulatedStickInput(1, 0, 0).schedule(false);[m
+[32m+[m[32m        if (runAuto || true) {[m
+[32m+[m[32m            new SimulatedStickInput(1, 0, 0).schedule(true);[m
+             done = true;[m
+         }[m
+     }[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java b/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..23d6508[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/LoadLauncher.java[m
+[36m@@ -0,0 +1,35 @@[m
+[32m+[m[32m/*----------------------------------------------------------------------------*/[m
+[32m+[m[32m/* Copyright (c) 2020 FRC Team 2077. All Rights Reserved.                     */[m
+[32m+[m[32m/* Open Source Software - may be modified and shared by FRC teams.            */[m
+[32m+[m[32m/*----------------------------------------------------------------------------*/[m
+[32m+[m
+[32m+[m[32mpackage org.usfirst.frc.team2077.commands;[m
+[32m+[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.CommandBase;[m
+[32m+[m
+[32m+[m[32mimport static org.usfirst.frc.team2077.Robot.robot_;[m
+[32m+[m
+[32m+[m[32mpublic class LoadLauncher extends CommandBase {[m
+[32m+[m[32m  public LoadLauncher(){[m
+[32m+[m[32m    addRequirements(robot_.testLauncher_);[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  @Override[m
+[32m+[m[32m  public void initialize() {[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  @Override[m
+[32m+[m[32m  public void execute() {[m
+[32m+[m[32m    robot_.testLauncher_.runLoader(.2);[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  @Override[m
+[32m+[m[32m  public void end(boolean interrupted) {[m
+[32m+[m[32m    robot_.testLauncher_.stopLoader();[m
+[32m+[m[32m  }[m
+[32m+[m
+[32m+[m[32m  @Override[m
+[32m+[m[32m  public boolean isFinished() {[m
+[32m+[m[32m    return false;[m
+[32m+[m[32m  }[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/SimpleDrive.java b/src/main/java/org/usfirst/frc/team2077/commands/SimpleDrive.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..9120c10[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/SimpleDrive.java[m
+[36m@@ -0,0 +1,99 @@[m
+[32m+[m[32m/*----------------------------------------------------------------------------*/[m
+[32m+[m[32m/* Copyright (c) 2020 FRC Team 2077. All Rights Reserved.                     */[m
+[32m+[m[32m/* Open Source Software - may be modified and shared by FRC teams.            */[m
+[32m+[m[32m/*----------------------------------------------------------------------------*/[m
+[32m+[m
+[32m+[m[32mpackage org.usfirst.frc.team2077.commands;[m
+[32m+[m
+[32m+[m[32mimport com.ctre.phoenix.motorcontrol.ControlMode;[m
+[32m+[m[32mimport com.ctre.phoenix.motorcontrol.can.TalonSRX;[m
+[32m+[m[32mimport edu.wpi.first.wpilibj.Joystick;[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.CommandBase;[m
+[32m+[m
+[32m+[m[32mimport static org.usfirst.frc.team2077.Robot.*;[m
+[32m+[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.button.JoystickButton;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.DriveStation;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.Robot;[m
+[32m+[m[32mimport org.usfirst.frc.team2077.subsystems.SimpleDriveSubsys;[m
+[32m+[m
+[32m+[m
+[32m+[m[32mpublic class SimpleDrive extends CommandBase {[m
+[32m+[m
+[32m+[m[32m    private Joystick stick;[m
+[32m+[m[32m    private int localCounter = 0;[m
+[32m+[m[32m    private boolean finnished = false;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//    TalonSRX s1 = new TalonSRX(1);[m
+[32m+[m[32m//    s1.configFactoryDefault();[m
+[32m+[m[32m//    TalonSRX s2 = new TalonSRX(2);[m
+[32m+[m[32m//    s2.configFactoryDefault();[m
+[32m+[m[32m//    TalonSRX s3 = new TalonSRX(3);[m
+[32m+[m[32m//    s3.configFactoryDefault();[m
+[32m+[m[32m//    TalonSRX s4 = new TalonSRX(4);[m
+[32m+[m[32m//    s4.configFactoryDefault();[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    double v1 = 0;[m
+[32m+[m[32m    double v2 = 0;[m
+[32m+[m[32m    double v3 = 0;[m
+[32m+[m[32m    double v4 = 0;[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    public SimpleDrive(Joystick stick){[m
+[32m+[m[32m        this.stick = stick;[m
+[32m+[m[32m        addRequirements(robot_.simpleDriveSubsys_);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//    @Override[m
+[32m+[m[32m//    public void initialize(){[m
+[32m+[m[32m////        s1.configFactoryDefault();[m
+[32m+[m[32m////        s2.configFactoryDefault();[m
+[32m+[m[32m////        s3.configFactoryDefault();[m
+[32m+[m[32m//        s4.configFactoryDefault();[m
+[32m+[m[32m//    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void initialize(){[m
+[32m+[m[32m//        robot_.simpleDriveSubsys_.setLauncherRPM(50);[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void execute() {[m
+[32m+[m[32m        if(localCounter % 5 == 0) {[m
+[32m+[m[32m            System.out.println(stick.getRawAxis(0) + ", " + stick.getRawAxis(1));[m
+[32m+[m[32m        }[m
+[32m+[m[32m        localCounter++;[m
+[32m+[m
+[32m+[m[32m//        robot_.simpleDriveSubsys_.setLauncherRPM(50.0);/// setLauncherRPM(50);[m
+[32m+[m
+[32m+[m
+[32m+[m[32m//        double r = Math.hypot(stick.getX(), stick.getY());[m
+[32m+[m[32m//        double robotAngle = Math.atan2(stick.getY(), stick.getX()) - Math.PI / 4;[m
+[32m+[m[32m//        double rightX = stick.getZ();[m
+[32m+[m
+[32m+[m[32m//        v1 = r * Math.cos(robotAngle) + rightX;[m
+[32m+[m[32m//        v2 = r * Math.sin(robotAngle) - rightX;[m
+[32m+[m[32m//        v3 = r * Math.sin(robotAngle) + rightX;[m
+[32m+[m[32m//        v4 = r * Math.cos(robotAngle) - rightX;[m
+[32m+[m[32m//[m
+[32m+[m[32m////        s1.set(ControlMode.PercentOutput, v1);[m
+[32m+[m[32m////        s2.set(ControlMode.PercentOutput, v2);[m
+[32m+[m[32m////        s3.set(ControlMode.PercentOutput, v3);[m
+[32m+[m[32m//        s4.set(ControlMode.PercentOutput, v4);[m
+[32m+[m
+[32m+[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public void end(boolean interrupted) {[m
+[32m+[m[32m        finnished = true;[m
+[32m+[m[32m    }[m
+[32m+[m
+[32m+[m[32m    @Override[m
+[32m+[m[32m    public boolean isFinished() {[m
+[32m+[m[32m        return finnished;[m
+[32m+[m[32m    }[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/commands/SimulatedStickInput.java b/src/main/java/org/usfirst/frc/team2077/commands/SimulatedStickInput.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..482334f[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/commands/SimulatedStickInput.java[m
+[36m@@ -0,0 +1,69 @@[m
+[32m+[m[32mpackage org.usfirst.frc.team2077.commands;[m
+[32m+[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.CommandBase;[m
+[32m+[m[32mimport edu.wpi.first.wpilibj2.command.CommandScheduler;[m
+[32m+[m
+[32m+[m[32mimport java.time.Duration;[m
+[32m+[m
+[32m+[m[32mimport static org.usfirst.frc.team2077.Robot.robot_;[m
+[32m+[m
+[32m+[m[32mpublic class SimulatedStickInput extends CommandBase {[m
+[32m+[m	[32mprivate final Duration simulateFor;[m
+[32m+[m	[32mprivate long startedAtMillis = 0;[m
+[32m+[m	[32mprivate Duration timeElapsed;[m
+[32m+[m	[32m// should be between 0-1[m
+[32m+[m	[32mprivate final double northThrottlePercent, eastThrottlePercent, rotationThrottlePercent;[m
+[32m+[m
+[32m+[m	[32mpublic SimulatedStickInput(double northThrottlePercent, double eastThrottlePercent, double rotationThrottlePercent) {[m
+[32m+[m		[32mthis(Duration.ofMillis(500), northThrottlePercent, eastThrottlePercent, rotationThrottlePercent);[m
+[32m+[m		[32maddRequirements(robot_.position_, robot_.heading_);[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic SimulatedStickInput(Duration simulateFor, double northThrottlePercent, double eastThrottlePercent, double rotationThrottlePercent) {[m
+[32m+[m		[32mSystem.out.println("Simulated stick input");[m
+[32m+[m		[32mthis.simulateFor = simulateFor;[m
+[32m+[m		[32mthis.northThrottlePercent = northThrottlePercent;[m
+[32m+[m		[32mthis.eastThrottlePercent = eastThrottlePercent;[m
+[32m+[m		[32mthis.rotationThrottlePercent = rotationThrottlePercent;[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32mpublic void initialize() {[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32m@Override[m
+[32m+[m	[32mpublic void execute() {[m
+[32m+[m		[32mif(startedAtMillis == 0) startedAtMillis = System.currentTimeMillis();[m
+[32m+[m		[32mtimeElapsed = Duration.ofMillis(System.currentTimeMillis() - startedAtMillis);[m
+[32m+[m		[32mrobot_.chassis_.setGLimits(PrimaryStickDrive3Axis.ACCELERATION_G_LIMIT, PrimaryStickDrive3Axis.DECELERATION_G_LIMIT);[m
+[32m+[m
+[32m+[m		[32mSystem.out.printf([m
+[32m+[m			[32m"[N%% | E%% | R%%][%s | %s | %s][Using R%%: %s]%n",[m
+[32m+[m			[32mnorthThrottlePercent,[m
+[32m+[m			[32meastThrottlePercent,[m
+[32m+[m			[32mrotationThrottlePercent,[m
+[32m+[m			[32mCommandScheduler.getInstance().requiring(robot_.heading_) == null[m
+[32m+[m		[32m);[m
+[32m+[m
+[32m+[m		[32mif(CommandScheduler.getInstance().requiring(robot_.heading_) != null) { // we don't control heading[m
+[32m+[m			[32mrobot_.chassis_.setVelocity01(northThrottlePercent, eastThrottlePercent);[m
+[32m+[m		[32m} else { // we control heading[m
+[32m+[m			[32mrobot_.chassis_.setVelocity01([m
+[32m+[m				[32mnorthThrottlePercent,[m
+[32m+[m				[32meastThrottlePercent,[m
+[32m+[m				[32mrotationThrottlePercent[m
+[32m+[m			[32m);[m
+[32m+[m		[32m}[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32m@Override[m
+[32m+[m	[32mpublic void end(boolean interrupted) {[m
+[32m+[m		[32mrobot_.chassis_.halt();[m
+[32m+[m	[32m}[m
+[32m+[m
+[32m+[m	[32m@Override[m
+[32m+[m	[32mpublic boolean isFinished() {[m
+[32m+[m		[32mSystem.out.println("elapsed: " + timeElapsed);[m
+[32m+[m		[32mSystem.out.println("for: " + simulateFor);[m
+[32m+[m		[32mreturn timeElapsed.compareTo(simulateFor) < 0;[m
+[32m+[m	[32m}[m
+[32m+[m[32m}[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/drivetrain/MecanumChassis.java b/src/main/java/org/usfirst/frc/team2077/drivetrain/MecanumChassis.java[m
+[1mindex 93de58a..7939133 100644[m
+[1m--- a/src/main/java/org/usfirst/frc/team2077/drivetrain/MecanumChassis.java[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2077/drivetrain/MecanumChassis.java[m
+[36m@@ -5,6 +5,7 @@[m
+ [m
+ package org.usfirst.frc.team2077.drivetrain;[m
+ [m
+[32m+[m[32mimport com.ctre.phoenix.motorcontrol.can.TalonSRX;[m
+ import org.usfirst.frc.team2077.*;[m
+ import org.usfirst.frc.team2077.drivetrain.MecanumMath.*;[m
+ import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule.DrivePosition;[m
+[36m@@ -28,17 +29,12 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ [m
+ 	private final MecanumMath mecanumMath_;[m
+ [m
+[31m-	private static void log(String message) {[m
+[31m-		System.out.println("\n\n" + message + "\n\n");[m
+[31m-	}[m
+[31m-[m
+ 	private static EnumMap<WheelPosition, DriveModuleIF> buildDriveModule() {[m
+ 		EnumMap<WheelPosition, DriveModuleIF> driveModule = new EnumMap<>(WheelPosition.class);[m
+ [m
+[31m-		log("Creating drive modules");[m
+ 		for(WheelPosition pos: WheelPosition.values()) {[m
+[31m-			log("Creating " + pos + " module");[m
+[31m-			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));[m
+[32m+[m[32m//			driveModule.put(pos, new SparkNeoDriveModule(DrivePosition.forWheelPosition(pos)));[m
+[32m+[m[32m//			driveModule.put(pos, new TalonDriveModule(DrivePosition.forWheelPosition(pos)));//DrivePosition.forWheelPosition(pos)));[m
+ 		}[m
+ [m
+ 		return driveModule;[m
+[36m@@ -54,32 +50,28 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ 		this(buildDriveModule(), Clock::getSeconds);[m
+ 	}[m
+ [m
+[31m-[m
+ 	MecanumChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, Supplier<Double> getSeconds) {[m
+ 		super(driveModule, WHEELBASE, TRACK_WIDTH, WHEEL_RADIUS, getSeconds);[m
+ [m
+[31m-		log("Initializing Math");[m
+ 		mecanumMath_ = new MecanumMath(wheelbase_, trackWidth_, wheelRadius_, wheelRadius_, 1, 180 / Math.PI);[m
+ [m
+ 		// north/south speed conversion from 0-1 range to DriveModule maximum (inches/second)[m
+[31m-		log("Getting maximum speed");[m
+ 		maximumSpeed_ = driveModule_.values()[m
+[31m-									.stream()[m
+[31m-									.map(DriveModuleIF::getMaximumSpeed)[m
+[31m-									.min(Comparator.naturalOrder())[m
+[31m-									.orElseThrow();[m
+[32m+[m				[32m.stream()[m
+[32m+[m				[32m.map(DriveModuleIF::getMaximumSpeed)[m
+[32m+[m				[32m.min(Comparator.naturalOrder())[m
+[32m+[m				[32m.orElseThrow();[m
+ //		Math.min([m
+ //			Math.min(driveModule_[0].getMaximumSpeed(), driveModule_[1].getMaximumSpeed()),[m
+ //			Math.min(driveModule_[2].getMaximumSpeed(), driveModule_[3].getMaximumSpeed())[m
+ //		);[m
+ 		// rotation speed conversion from 0-1 range to DriveModule maximum (degrees/second)[m
+[31m-		log("Grabbing maximum rotation speed");[m
+ 		maximumRotation_ = mecanumMath_.forward(MecanumMath.mapOf([m
+[31m-			WheelPosition.class,[m
+[31m-			-maximumSpeed_,[m
+[31m-			-maximumSpeed_,[m
+[31m-			maximumSpeed_,[m
+[31m-			maximumSpeed_[m
+[32m+[m				[32mWheelPosition.class,[m
+[32m+[m				[32m-maximumSpeed_,[m
+[32m+[m				[32m-maximumSpeed_,[m
+[32m+[m				[32mmaximumSpeed_,[m
+[32m+[m				[32mmaximumSpeed_[m
+ 		)).get(ROTATION);[m
+ [m
+ 		// lowest chassis speeds supportable by the drive modules[m
+[36m@@ -87,22 +79,22 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ 		minimumRotation_ = maximumRotation_ * .1;[m
+ [m
+ 		System.out.println(getClass().getName() +[m
+[31m-						   "MAXIMUM SPEED:" +[m
+[31m-						   Math.round(maximumSpeed_ * 10.) / 10. +[m
+[31m-						   " IN/SEC MAXIMUM ROTATION:" +[m
+[31m-						   Math.round(maximumRotation_ * 10.) / 10. +[m
+[31m-						   " DEG/SEC");[m
+[32m+[m				[32m"MAXIMUM SPEED:" +[m
+[32m+[m				[32mMath.round(maximumSpeed_ * 10.) / 10. +[m
+[32m+[m				[32m" IN/SEC MAXIMUM ROTATION:" +[m
+[32m+[m				[32mMath.round(maximumRotation_ * 10.) / 10. +[m
+[32m+[m				[32m" DEG/SEC");[m
+ 		System.out.println(getClass().getName() +[m
+[31m-						   "MINIMUM SPEED:" +[m
+[31m-						   Math.round(minimumSpeed_ * 10.) / 10. +[m
+[31m-						   " IN/SEC MINIMUM ROTATION:" +[m
+[31m-						   Math.round(minimumRotation_ * 10.) / 10. +[m
+[31m-						   " DEG/SEC");[m
+[32m+[m				[32m"MINIMUM SPEED:" +[m
+[32m+[m				[32mMath.round(minimumSpeed_ * 10.) / 10. +[m
+[32m+[m				[32m" IN/SEC MINIMUM ROTATION:" +[m
+[32m+[m				[32mMath.round(minimumRotation_ * 10.) / 10. +[m
+[32m+[m				[32m" DEG/SEC");[m
+ 		AccelerationLimits a = getAccelerationLimits();[m
+ 		System.out.println(getClass().getName() + "ACCELERATION:"[m
+[31m-						   + Math.round(a.get(NORTH, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(NORTH, DECELERATION) * 10.) / 10. + "/"[m
+[31m-						   + Math.round(a.get(EAST, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(EAST, DECELERATION) * 10.) / 10. + "/"[m
+[31m-						   + Math.round(a.get(ROTATION, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(ROTATION, DECELERATION) * 10.) / 10.);[m
+[32m+[m				[32m+ Math.round(a.get(NORTH, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(NORTH, DECELERATION) * 10.) / 10. + "/"[m
+[32m+[m				[32m+ Math.round(a.get(EAST, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(EAST, DECELERATION) * 10.) / 10. + "/"[m
+[32m+[m				[32m+ Math.round(a.get(ROTATION, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(ROTATION, DECELERATION) * 10.) / 10.);[m
+ 	}[m
+ [m
+ 	@Override[m
+[36m@@ -143,14 +135,14 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ 		// chassis velocity from motor/wheel measurements[m
+ [m
+ 		EnumMap<WheelPosition, Double> wheelVelocities = driveModule_.entrySet()[m
+[31m-																	 .stream()[m
+[31m-																	 .map(e -> new SimpleEntry<>(e.getKey(), e.getValue().getVelocity()))[m
+[31m-																	 .collect(toMap([m
+[31m-																	 	Entry::getKey,[m
+[31m-																		Entry::getValue,[m
+[31m-																		Math::min,[m
+[31m-																		() -> new EnumMap<>(WheelPosition.class)[m
+[31m-																	 ));[m
+[32m+[m				[32m.stream()[m
+[32m+[m				[32m.map(e -> new SimpleEntry<>(e.getKey(), e.getValue().getVelocity()))[m
+[32m+[m				[32m.collect(toMap([m
+[32m+[m						[32mEntry::getKey,[m
+[32m+[m						[32mEntry::getValue,[m
+[32m+[m						[32mMath::min,[m
+[32m+[m						[32m() -> new EnumMap<>(WheelPosition.class)[m
+[32m+[m				[32m));[m
+ 		velocityMeasured_ = mecanumMath_.forward(wheelVelocities);[m
+ [m
+ 		// TODO: E/W velocities are consistently lower than those calculated from wheel speeds.[m
+[36m@@ -161,14 +153,14 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ [m
+ 		// update position with motion since last update[m
+ 		positionSet_.moveRelative([m
+[31m-			velocitySet_.get(NORTH) * timeSinceLastUpdate_,[m
+[31m-			velocitySet_.get(EAST) * timeSinceLastUpdate_,[m
+[31m-			velocitySet_.get(ROTATION) * timeSinceLastUpdate_[m
+[32m+[m				[32mvelocitySet_.get(NORTH) * timeSinceLastUpdate_,[m
+[32m+[m				[32mvelocitySet_.get(EAST) * timeSinceLastUpdate_,[m
+[32m+[m				[32mvelocitySet_.get(ROTATION) * timeSinceLastUpdate_[m
+ 		);[m
+ 		positionMeasured_.moveRelative([m
+[31m-			velocityMeasured_.get(NORTH) * timeSinceLastUpdate_,[m
+[31m-			velocityMeasured_.get(EAST) * timeSinceLastUpdate_,[m
+[31m-			velocityMeasured_.get(ROTATION) * timeSinceLastUpdate_[m
+[32m+[m				[32mvelocityMeasured_.get(NORTH) * timeSinceLastUpdate_,[m
+[32m+[m				[32mvelocityMeasured_.get(EAST) * timeSinceLastUpdate_,[m
+[32m+[m				[32mvelocityMeasured_.get(ROTATION) * timeSinceLastUpdate_[m
+ 		);[m
+ 		if(robot_.angleSensor_ != null) { // TODO: Confirm AngleSensor is actually reading. Handle bench testing.[m
+ 			double[] pS = positionSet_.get();[m
+[36m@@ -189,15 +181,15 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ [m
+ 		// scale all motors proportionally if any are out of range[m
+ 		double max = wheelSpeed.values()[m
+[31m-		                       .stream()[m
+[31m-					  .map(vel -> Math.abs(vel) / maximumSpeed_)[m
+[31m-					  .max(Comparator.naturalOrder())[m
+[31m-		              .map(val -> Math.max(1, val))[m
+[31m-					  .orElseThrow();[m
+[32m+[m				[32m.stream()[m
+[32m+[m				[32m.map(vel -> Math.abs(vel) / maximumSpeed_)[m
+[32m+[m				[32m.max(Comparator.naturalOrder())[m
+[32m+[m				[32m.map(val -> Math.max(1, val))[m
+[32m+[m				[32m.orElseThrow();[m
+ [m
+ 		for (WheelPosition position : WheelPosition.values()) {[m
+ 			driveModule_.get(position).setVelocity([m
+[31m-				wheelSpeed.get(position) / max[m
+[32m+[m					[32mwheelSpeed.get(position) / max[m
+ 			);[m
+ 		}[m
+ 	}[m
+[36m@@ -220,13 +212,13 @@[m [mpublic class MecanumChassis extends AbstractChassis {[m
+ //			positionMeasured_[m
+ //		);[m
+ 		return "V:" +[m
+[31m-			   Math.round(velocity.get(NORTH) * 10.) / 10. +[m
+[31m-			   "/" +[m
+[31m-			   Math.round(velocity.get(EAST) * 10.) / 10. +[m
+[31m-			   "/" +[m
+[31m-			   Math.round(velocity.get(ROTATION) * 10.) / 10.[m
+[31m-			   +[m
+[31m-			   " W:" +[m
+[31m-			   driveModule_;[m
+[32m+[m				[32mMath.round(velocity.get(NORTH) * 10.) / 10. +[m
+[32m+[m				[32m"/" +[m
+[32m+[m				[32mMath.round(velocity.get(EAST) * 10.) / 10. +[m
+[32m+[m				[32m"/" +[m
+[32m+[m				[32mMath.round(velocity.get(ROTATION) * 10.) / 10.[m
+[32m+[m				[32m+[m
+[32m+[m				[32m" W:" +[m
+[32m+[m				[32mdriveModule_;[m
+ 	}[m
+ }[m
+[1mdiff --git a/src/main/java/org/usfirst/frc/team2077/drivetrain/TalonDriveModule.java b/src/main/java/org/usfirst/frc/team2077/drivetrain/TalonDriveModule.java[m
+[1mnew file mode 100644[m
+[1mindex 0000000..289f0d7[m
+[1m--- /dev/null[m
+[1m+++ b/src/main/java/org/usfirst/frc/team2
