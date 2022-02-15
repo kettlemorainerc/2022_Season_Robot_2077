@@ -50,7 +50,7 @@ public class DriveStation {
     }
 
     private static DriveJoystick getFlysky() {
-        return new DriveJoystick(2).setDriveSensitivity(.3, 1)
+        return new DriveJoystick(2, 4).setDriveSensitivity(.3, 1)
                                    .setRotationSensitivity(.05, 1);
     }
 

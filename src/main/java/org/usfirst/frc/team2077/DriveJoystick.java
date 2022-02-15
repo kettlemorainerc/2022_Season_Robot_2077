@@ -2,8 +2,10 @@ package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.*;
 
+import static edu.wpi.first.wpilibj.Joystick.AxisType.kZ;
+
 public class DriveJoystick extends Joystick implements DriveStick {
-    private static final int DEFAULT_ROTATION_AXIS = 2;
+    private static final int DEFAULT_ROTATION_AXIS = AxisType.kZ.value;
 
     protected double driveDeadBand, driveExponent;
     protected double rotationDeadBand, rotationExponent;

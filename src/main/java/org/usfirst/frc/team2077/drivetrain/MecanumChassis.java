@@ -23,7 +23,7 @@ import static org.usfirst.frc.team2077.math.AccelerationLimits.Type.*;
 
 public class MecanumChassis extends AbstractChassis {
 	private static final double WHEELBASE = 20.375; // inches
-	private static final double TRACK_WIDTH = 22.625; // inches
+	private static final double TRACK_WIDTH = 25.5; // inches
 	private static final double WHEEL_RADIUS = 4.0; // inches
 	private static final double EAST_ADJUSTMENT = .65;
 
