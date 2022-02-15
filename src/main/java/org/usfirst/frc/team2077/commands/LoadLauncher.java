@@ -5,11 +5,9 @@
 
 package org.usfirst.frc.team2077.commands;
 
-import edu.wpi.first.wpilibj2.command.CommandBase;
-
 import static org.usfirst.frc.team2077.Robot.robot_;
 
-public class LoadLauncher extends CommandBase {
+public class LoadLauncher extends RepeatedCommand {
   public LoadLauncher(){
     addRequirements(robot_.newLauncher_);
   }

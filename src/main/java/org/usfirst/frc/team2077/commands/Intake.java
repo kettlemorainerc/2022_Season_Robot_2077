@@ -6,84 +6,53 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;
 import org.usfirst.frc.team2077.subsystems.LauncherIF;
 
-public class NewLauncher extends CommandBase implements LauncherIF {
-    public static final double MAX_RPM = 5_000;
-    private TalonSRX _launcherTalon = new TalonSRX(2);
-    private SparkNeoDriveModule _launcherSpark// = new SparkNeoDriveModule(2);
-
-    //More in use            DEFAULTS
-    private double _setPoint = 0.0;
+public class Intake extends CommandBase {
+    public static final double MAX_POWER = 1;
     private boolean _running = false;
-    private boolean _loaded = false;
-    private boolean _loaderReady = false;
+    private double _power = 0.5;
+
+    private TalonSRX _launcherTalon = new TalonSRX(7);
 
 
-    public NewLauncher() {
+    public Intake() {
         _launcherTalon.configFactoryDefault();
     }
 
     @Override
     public void execute() {
-        _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
+        _launcherTalon.set(ControlMode.PercentOutput, _power);
     }
 
 
-    @Override
-    public boolean setRangeUpper(double range) {
-        return false;
-    }
 
-    @Override
-    public boolean setRangeLower(double range) {
-        return false;
-    }
-
-    @Override
-    public void setRunning(boolean running) {
-        _running = running;
-        if(_running)
-            _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
-    }
-
-    @Override
     public boolean isRunning() {
         return _running;
     }
 
-    @Override
-    public void load() {
-        setRPM(.50);
-        if (_running && _setPoint != 0) {
-            _launcherTalon.set(ControlMode.PercentOutput,_setPoint);
+    public void runIntake() {
+        setPercent(0.5);
+        if (_running && _power != 0) {
+            _launcherTalon.set(ControlMode.PercentOutput, _power);
         } else {
-            _launcherTalon.set(ControlMode.PercentOutput,0);
+            _launcherTalon.set(ControlMode.PercentOutput, 0);
         }
     }
 
-    @Override
-    public boolean isLoaded() {
-        return _loaded;
-    }
-
-    @Override
     public boolean isReady() {
         return false;
     }
 
-    @Override
-    public void launch() {
+    public void startIntake() {
         _running = true;
     }
 
-
-
-    public void setRPM(double rpm) {
-        _setPoint = Math.min(rpm, MAX_RPM);
+    public void setPercent(double percent) {
+        _power = Math.min(percent, MAX_POWER);
     }
-    public void stopLoader(){
-//        _loaderReady = false;
-//        _running = false;
-        _launcherTalon.set(ControlMode.PercentOutput,0.0);
+
+    public void stopIntake(){
+        _running = false;
+        _launcherTalon.set(ControlMode.PercentOutput, 0.0);
 
     }
 

@@ -9,7 +9,7 @@ import org.usfirst.frc.team2077.subsystems.LauncherIF;
 public class NewLauncher extends CommandBase implements LauncherIF {
     public static final double MAX_RPM = 5_000;
     private TalonSRX _launcherTalon = new TalonSRX(2);
-    private SparkNeoDriveModule _launcherSpark = new SparkNeoDriveModule(2);
+    private SparkNeoDriveModule _launcherSpark;
 
     //More in use            DEFAULTS
     private double _setPoint = 0.0;

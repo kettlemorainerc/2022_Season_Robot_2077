@@ -7,9 +7,9 @@ package org.usfirst.frc.team2077.commands;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
 
-public class LoadLauncher extends RepeatedCommand {
-  public LoadLauncher(){
-    addRequirements(robot_.newLauncher_);
+public class RunIntake extends RepeatedCommand {
+  public RunIntake(){
+    addRequirements(robot_.newIntake_);
   }
 
   @Override
