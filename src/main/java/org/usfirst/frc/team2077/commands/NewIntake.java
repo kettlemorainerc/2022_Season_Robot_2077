@@ -1,11 +1,11 @@
-package org.usfirst.frc.team2077.subsystems;
+package org.usfirst.frc.team2077.commands;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class IntakeController implements Subsystem {
+public class NewIntake extends CommandBase implements Subsystem {
     public static final double MAX_POWER = 1;
     private boolean _running = false;
     private double _power = 0.5;
@@ -13,7 +13,7 @@ public class IntakeController implements Subsystem {
     private TalonSRX _launcherTalon = new TalonSRX(7);
 
 
-    public IntakeController() {
+    public NewIntake() {
         _launcherTalon.configFactoryDefault();
     }
 
@@ -48,7 +48,6 @@ public class IntakeController implements Subsystem {
     public void stopIntake() {
         _running = false;
         _launcherTalon.set(ControlMode.PercentOutput, 0.0);
-
     }
 
 

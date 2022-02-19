@@ -14,8 +14,8 @@ import org.usfirst.frc.team2077.drivetrain.*;
 
 public class DriveStation {
     public DriveStation(Subsystem position_, DriveChassisIF chassis) {
-        DriveJoystick driveStick = getFlysky();
-//        DriveStick driveStick = getJoystick(0);
+//        DriveJoystick driveStick = getFlysky();
+        DriveJoystick driveStick = getJoystick();
 
         Joystick technicalStick = getTechnicalJoystick();
 //        Joystick technicalStick = getNumpad();
@@ -34,24 +34,15 @@ public class DriveStation {
     }
 
     private void bindTechnicalControl(Joystick secondary_) {
-//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
+        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
+        useCommand(new Intake(false), new JoystickButton(secondary_, 3));
+        useCommand(new Intake(true), new JoystickButton(secondary_, 2));
 
-
-        useCommand(new Intake(), new JoystickButton(secondary_, 1));
-//        new Intake().bind(new JoystickButton(secondary_, 1));
-
-//        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
-
-//        new JoystickButton(testing, 1).whenPressed(new PrimaryStickDrive3Axis());
-
-//        new JoystickButton(testing, 1).whenPressed(new TurnOffLauncher());
-//        new JoystickButton(testing, 1).whenHeld(new BasicStickOutput(testing),true);
-//        new JoystickButton(testing, 1).whenHeld(new SimpleDrive(testing),true);
-//        new JoystickButton(testing, 1).whenHeld(new NewLauncher(),true);
+        useCommand(new AlignToShadow(), new JoystickButton(secondary_,4));
     }
 
     private static DriveJoystick getJoystick() {
-        return new DriveJoystick(0).setSensitivity(.5, 2.5);
+        return new DriveJoystick(0).setSensitivity(.2, 2.5);
     }
 
     private static DriveJoystick getFlysky() {

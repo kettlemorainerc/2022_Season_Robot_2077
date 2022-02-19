@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.usfirst.frc.team2077.commands.AutonomousCheck;
-import org.usfirst.frc.team2077.subsystems.IntakeController;
+import org.usfirst.frc.team2077.commands.NewIntake;
 import org.usfirst.frc.team2077.commands.NewLauncher;
 import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.sensors.*;
@@ -64,7 +64,7 @@ public class Robot extends TimedRobot {
 	public Launcher testLauncher_; // low-level control for testing
 	public NewLauncher newLauncher_; // low-level control for testing
 
-	public IntakeController intakeController_;
+	public NewIntake intakeController_;
 
 
 	// Default commands
@@ -122,7 +122,7 @@ public class Robot extends TimedRobot {
 		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
 
 		newLauncher_ = new NewLauncher();
-		intakeController_ = new IntakeController();
+		intakeController_ = new NewIntake();
 
 //		simpleDriveSubsys_ = new SimpleDriveSubsys();
 //		testLauncher_ = launcher_ instanceof LauncherOld ? (LauncherOld) launcher_ : null;

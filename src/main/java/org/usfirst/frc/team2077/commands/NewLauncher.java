@@ -164,13 +164,6 @@ public class NewLauncher extends CommandBase implements LauncherIF {
         _launcherTalon.set(ControlMode.PercentOutput,0.0);
         _shooterRunning = false;
         _shooterNeo.setRPM(0.0);
-
     }
-
-
-
-
-
-
 
 }

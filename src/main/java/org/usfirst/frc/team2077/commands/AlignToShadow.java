@@ -16,7 +16,7 @@ import java.util.EnumMap;
 import static org.usfirst.frc.team2077.Robot.robot_;
 
 
-public class AlignToShadow extends CommandBase {
+public class AlignToShadow extends RepeatedCommand {
 	private ColorSensor _sensor;
 	private int counter = 0;
 	private double SPACES_TO_ROUND = 10_000;
@@ -41,37 +41,21 @@ public class AlignToShadow extends CommandBase {
 //			System.out.println("I am "+(_sensor.isOnShadow()?"":"NOT ")+"above the shadow line");
 //		}
 //
-////		System.out.println("TESTING");
+		System.out.println(_sensor.hashCode());
 
-//		ShadowMovements smallMovement = new ShadowMovements();
-
-
-		EnumMap<MecanumMath.VelocityDirection, Double> max = robot_.chassis_.getMaximumVelocity();
-		EnumMap<MecanumMath.VelocityDirection, Double> min = robot_.chassis_.getMinimumVelocity();
-
-		double[] distanceTotal_ = new double[]{100, 100 * .68, 100 * 7 / 8}; //fudged values for the multipliers
-
-		double[] sign = {
-				Math.signum(distanceTotal_[0]),
-				Math.signum(distanceTotal_[1]),
-				Math.signum(distanceTotal_[02])
-		};
-
-		double[] slow_ = new double[]{
-				min.get(MecanumMath.VelocityDirection.NORTH) * sign[0],
-				min.get(MecanumMath.VelocityDirection.EAST) * sign[1],
-				min.get(MecanumMath.VelocityDirection.ROTATION) * sign[2]
-		}; // don't scale below minimum
-//		robot_.chassis_.setVelocity(slow_[0], slow_[1], slow_[2], robot_.chassis_.getAccelerationLimits());
+		ShadowMovements smallMovements = new ShadowMovements();
+		while(!_sensor.isOnShadow()){
+			smallMovements.searching();
+		}
+		smallMovements.stopSearching();
 
 	}
 
 
 
-
 	@Override
 	public void end(boolean interrupted) {
-
+//		smallMoveovements.stopLoader();
 	}
 
 	@Override
