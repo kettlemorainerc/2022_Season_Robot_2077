@@ -32,7 +32,8 @@ public class LoadLauncher extends RepeatedCommand{
   @Override
   public void execute() {
     robot_.newLauncher_.setRunning(true);
-    robot_.newLauncher_.launch();
+    robot_.newLauncher_.launch(-_stick.getY());
+
 //    System.out.println("_stick.getY = "+_stick.getY());
   }
 
