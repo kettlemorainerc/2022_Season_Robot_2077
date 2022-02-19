@@ -34,7 +34,12 @@ public class DriveStation {
     }
 
     private void bindTechnicalControl(Joystick secondary_) {
-        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
+//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
+
+
+        useCommand(new Intake(), new JoystickButton(secondary_, 1));
+//        new Intake().bind(new JoystickButton(secondary_, 1));
+
 //        new JoystickButton(testing, 2).whileHeld(new AlignToShadow());
 
 //        new JoystickButton(testing, 1).whenPressed(new PrimaryStickDrive3Axis());

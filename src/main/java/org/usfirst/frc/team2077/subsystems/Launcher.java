@@ -3,8 +3,9 @@ package org.usfirst.frc.team2077.subsystems;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;
+import org.usfirst.frc.team2077.commands.RepeatedCommand;
 import org.usfirst.frc.team2077.math.ShooterMath;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
@@ -41,10 +42,10 @@ public class Launcher extends SubsystemBase implements LauncherIF {
 
     public boolean launcherRunning_ = false;
     public double launcherRPM_ = 0;
-   
+
     public final double launcherMaxRPM_ = 4000; // TODO: Put in Constants.
-    
-    private final double rightLeftBias = 0.0;  // TODO: Put in Constants?  
+
+    private final double rightLeftBias = 0.0;  // TODO: Put in Constants?
 
     private final double unitsToRPM = 1; //(600. / 2048.); //TODO: Fix this
     private final double kP = 0.1; // 0.1
@@ -204,7 +205,7 @@ public class Launcher extends SubsystemBase implements LauncherIF {
         } else {
 //            screw_.set(ControlMode.PercentOutput, -1.0);
         }
-        
+
     }
 
     public void stopAngle() {
@@ -222,7 +223,7 @@ public class Launcher extends SubsystemBase implements LauncherIF {
         double rightRPM = 0;
         if (velocity != 0) {
             double bias = velocity * rightLeftBias / 2.;
-            
+
             leftRPM = (velocity - bias) / unitsToRPM;
             rightRPM = (velocity + bias) / unitsToRPM;
         }
@@ -234,7 +235,7 @@ public class Launcher extends SubsystemBase implements LauncherIF {
     public double getLaunchVelL() {
 //        double res = shooterL_.getRPM() * unitsToRPM;
 
-        
+
 //        return res;
         return 0;
     }
@@ -310,4 +311,5 @@ public class Launcher extends SubsystemBase implements LauncherIF {
         return new double[] {this.shooterMath.getRangeAV()[0], this.launcherRPM_};
 //        return this.shooterMath.getRangeAV();
     }
+
 }

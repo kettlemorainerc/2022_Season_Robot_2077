@@ -16,15 +16,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.usfirst.frc.team2077.commands.AutonomousCheck;
+import org.usfirst.frc.team2077.subsystems.IntakeController;
 import org.usfirst.frc.team2077.commands.NewLauncher;
 import org.usfirst.frc.team2077.drivetrain.*;
-import org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection;
 import org.usfirst.frc.team2077.sensors.*;
 import org.usfirst.frc.team2077.subsystems.*;
-
-import java.util.EnumMap;
-
-import static org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection.*;
 
 public class Robot extends TimedRobot {
 
@@ -67,6 +63,10 @@ public class Robot extends TimedRobot {
 	// public Telemetry telemetry_;
 	public Launcher testLauncher_; // low-level control for testing
 	public NewLauncher newLauncher_; // low-level control for testing
+
+	public IntakeController intakeController_;
+
+
 	// Default commands
 	//    Autonomous selected via drive station dashboard.
 	protected Command autonomous_;
@@ -122,9 +122,10 @@ public class Robot extends TimedRobot {
 		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
 
 		newLauncher_ = new NewLauncher();
+		intakeController_ = new IntakeController();
 
 //		simpleDriveSubsys_ = new SimpleDriveSubsys();
-//		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
+//		testLauncher_ = launcher_ instanceof LauncherOld ? (LauncherOld) launcher_ : null;
 
 //		crosshairs_ = new Crosshairs();
 	}

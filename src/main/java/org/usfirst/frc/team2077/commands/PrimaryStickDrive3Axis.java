@@ -5,9 +5,14 @@
 
 package org.usfirst.frc.team2077.commands;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.*;
 import org.usfirst.frc.team2077.*;
 import org.usfirst.frc.team2077.drivetrain.*;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 import static org.usfirst.frc.team2077.Robot.*;
 
@@ -92,5 +97,10 @@ public class PrimaryStickDrive3Axis extends CommandBase {
 	@Override
 	public boolean isFinished() {
 		return false;
+	}
+
+    public static class RunIntake extends RepeatedCommand {
+		Joystick _stick;
+		private Map<String, NetworkTableEntry> nte_ = new TreeMap<>();
 	}
 }
