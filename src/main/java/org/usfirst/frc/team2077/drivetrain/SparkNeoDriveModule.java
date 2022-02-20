@@ -9,8 +9,7 @@ import static org.usfirst.frc.team2077.drivetrain.MecanumMath.WheelPosition.*;
 public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
     private static final double WHEEL_GEAR_RATIO = 10.714, WHEEL_RADIUS = 4;
     private static final double LAUNCHER_GEAR_RATIO = 1, LAUNCHER_WHEEL_RADIUS = 2;
-//    private static final int MAX_SHOOTER_RPM = 5400, MAX_WHEEL_RPM = 4500;
-    private static final int MAX_SHOOTER_RPM = 54000, MAX_WHEEL_RPM = 4500;
+    private static final int MAX_SHOOTER_RPM = 5000, MAX_WHEEL_RPM = 4000;//4500 for MAX_WHEEL_RPM, 5400 for shooter
     private static final boolean USE_SOFTWARE_PID = true;
 
     public enum DrivePosition {
@@ -109,6 +108,7 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         } else {
             pidController.setReference(setPoint, ControlType.kVelocity);
         }
+        if (position == DrivePosition.SHOOTER) System.out.println("SET RPM: " + setPoint);
     }
 
     public double getRPM() {

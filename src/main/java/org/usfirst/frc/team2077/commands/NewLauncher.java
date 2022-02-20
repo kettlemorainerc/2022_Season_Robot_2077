@@ -13,7 +13,7 @@ import org.usfirst.frc.team2077.subsystems.LauncherIF;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
 
-public class NewLauncher extends CommandBase implements LauncherIF {
+public class NewLauncher implements LauncherIF {
     public static final double MAX_RPM = 5_000;
     private TalonSRX _launcherTalon = new TalonSRX(6);
     private SparkNeoDriveModule _shooterNeo = new SparkNeoDriveModule(SparkNeoDriveModule.DrivePosition.SHOOTER);
@@ -45,25 +45,29 @@ public class NewLauncher extends CommandBase implements LauncherIF {
 
 
         launcherInstance.addListener(entryNotification -> {
+            System.out.println(">>>START OF ADDLISTENER <<<");
             double providedLauncherRPM = entryNotification.getEntry().getDouble(0D);
             this.shooterSetRpm = providedLauncherRPM;
             if(_loaderRunning) { // TODO: Separate launch & shooter
                 _shooterNeo.setRPM(providedLauncherRPM);
             }
+            System.out.println(">>>END OF ADDLISTENER <<<");
         }, EntryListenerFlags.kUpdate | EntryListenerFlags.kNew | EntryListenerFlags.kImmediate | EntryListenerFlags.kLocal);
 
     }
 
-    @Override
-    public void execute() {
-        _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
-    }
-
-    @Override
-    public void initialize() {
-
-        this._shooterNeo.setRPM(SmartDashboard.getEntry("launcher_RPM").getDouble(0));
-    }
+//    @Override
+//    public void execute() {
+////        _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
+//    }
+//
+//    @Override
+//    public void initialize() {
+//
+//        if(_loaderRunning && _shooterRunning){this._shooterNeo.setRPM(SmartDashboard.getEntry("launcher_RPM").getDouble(0));}else{
+//            stopLoader();
+//        }
+//    }
 
     @Override
     public boolean setRangeUpper(double range) {
@@ -78,9 +82,14 @@ public class NewLauncher extends CommandBase implements LauncherIF {
     @Override
     public void setRunning(boolean running) {
         _loaderRunning = running;
-        if(_loaderRunning) {
+        _shooterRunning = running;
+
+        if(_shooterRunning) {
             _launcherTalon.set(ControlMode.PercentOutput, _setPoint);
             _shooterNeo.setRPM(shooterSetRpm);
+        }else{
+            _launcherTalon.set(ControlMode.PercentOutput, 0D);
+            _shooterNeo.setRPM(0D);
         }
     }
 
@@ -97,7 +106,6 @@ public class NewLauncher extends CommandBase implements LauncherIF {
 
     public void load(double value_) {
         setLoaderPercentage(-.5);
-        _shooterRunning = true;
 
 //        if(_shooterRunning /*&& value_ > 0.1*/){//TODO: Make take a _setPoint
 ////            _shooterNeo.setRPM(DEFAULT_LAUNCHING_SPEED);
@@ -108,9 +116,11 @@ public class NewLauncher extends CommandBase implements LauncherIF {
 ////            System.out.println(launchSpeed);
 //        }
 
-        if (_loaderRunning && _setPoint != 0.0) {
+        if (_loaderRunning && _shooterRunning && _setPoint != 0.0) {
+            _shooterRunning = true;
             _launcherTalon.set(ControlMode.PercentOutput,_setPoint);
         } else {
+            _shooterRunning = false;
             _launcherTalon.set(ControlMode.PercentOutput,0);
         }
     }
@@ -160,10 +170,13 @@ public class NewLauncher extends CommandBase implements LauncherIF {
         _setPoint = Math.min(percentage_, MAX_RPM);
     }
     public void stopLoader(){
+        load(0);
         _loaderRunning = false;
         _launcherTalon.set(ControlMode.PercentOutput,0.0);
         _shooterRunning = false;
         _shooterNeo.setRPM(0.0);
+        this.shooterSetRpm = 0D;
+        System.out.println(_shooterNeo.getRPM() + "<-------------------");
     }
 
 }

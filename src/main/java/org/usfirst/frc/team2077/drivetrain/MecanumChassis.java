@@ -59,7 +59,7 @@ public class MecanumChassis extends AbstractChassis {
 				.stream()
 				.map(DriveModuleIF::getMaximumSpeed)
 				.min(Comparator.naturalOrder())
-				.orElseThrow();
+				.orElseThrow() * .75;
 //		Math.min(
 //			Math.min(driveModule_[0].getMaximumSpeed(), driveModule_[1].getMaximumSpeed()),
 //			Math.min(driveModule_[2].getMaximumSpeed(), driveModule_[3].getMaximumSpeed())

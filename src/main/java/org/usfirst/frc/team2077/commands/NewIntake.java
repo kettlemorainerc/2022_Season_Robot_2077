@@ -26,8 +26,8 @@ public class NewIntake extends CommandBase implements Subsystem {
         return _running;
     }
 
-    public void runIntake(boolean reversed) {
-        setPercent(0.5);
+    public void runIntake(boolean reversed_) {
+        setPercent(reversed_? 0.35 : -0.5);
         if (_running && _power != 0) {
             _launcherTalon.set(ControlMode.PercentOutput, _power);
         } else {

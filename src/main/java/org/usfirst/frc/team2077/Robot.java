@@ -121,7 +121,7 @@ public class Robot extends TimedRobot {
 		launcher_ = new Launcher();
 		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
 
-		newLauncher_ = new NewLauncher();
+//		newLauncher_ = new NewLauncher();
 		intakeController_ = new NewIntake();
 
 //		simpleDriveSubsys_ = new SimpleDriveSubsys();

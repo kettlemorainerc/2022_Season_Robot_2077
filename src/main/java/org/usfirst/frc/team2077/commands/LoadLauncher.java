@@ -15,7 +15,7 @@ import java.util.TreeMap;
 
 import static org.usfirst.frc.team2077.Robot.robot_;
 
-public class LoadLauncher extends RepeatedCommand{
+public class LoadLauncher extends CommandBase{
   Joystick _stick;
   private Map<String,NetworkTableEntry> nte_ = new TreeMap<>();
 
@@ -27,18 +27,19 @@ public class LoadLauncher extends RepeatedCommand{
 
   @Override
   public void initialize() {
-  }
+    System.out.println("  >START OF EXECUTE <");
 
-  @Override
-  public void execute() {
     robot_.newLauncher_.setRunning(true);
     robot_.newLauncher_.launch();
 //    System.out.println("_stick.getY = "+_stick.getY());
+    System.out.println("  >END OF EXECUTE FUNCTION<");
   }
 
   @Override
   public void end(boolean interrupted) {
     robot_.newLauncher_.stopLoader();
+    robot_.newLauncher_.setRunning(false);
+    System.out.println(">>>END OF EXECUTE END<<<<<<");
   }
 
   @Override

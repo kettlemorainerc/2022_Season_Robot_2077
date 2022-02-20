@@ -60,7 +60,7 @@ public class PrimaryStickDrive3Axis extends CommandBase {
 
 		// TODO: Who handles rotation updates if another command owns robot_position_?
 		// TODO: Check joystick/drive capabilities and merge w/2-axis.
-		double north = stick.getNorth();
+		double north = -stick.getNorth();
 		double east = stick.getEast();
 
 		// Tank drive
@@ -75,7 +75,7 @@ public class PrimaryStickDrive3Axis extends CommandBase {
 				chassis.setVelocity01(north * speedLimit * throttle, east * speedLimit * throttle);
 			}
 		} else { // we control heading
-			double clockwise = stick.getRotation();
+			double clockwise = stick.getRotation()*0.4;
 
 			if (north == 0 && east == 0 && clockwise == 0) {//@@@
 				chassis.halt();
