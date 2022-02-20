@@ -147,6 +147,12 @@ public class NewLauncher implements LauncherIF {
 //        }
     }
 
+    public void launch(double value){
+        _shooterRunning = true;
+        fireWhenReady(value * MAX_RPM);
+        load();
+    }
+
     public void fireWhenReady(double targetVelocity_){
         runLauncher(targetVelocity_);
         if(_shooterNeo.getRPM() >= targetVelocity_){
