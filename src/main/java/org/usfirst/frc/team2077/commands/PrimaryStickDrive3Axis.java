@@ -74,6 +74,7 @@ public class PrimaryStickDrive3Axis extends CommandBase {
 			} else {
 				chassis.setVelocity01(north * speedLimit * throttle, east * speedLimit * throttle);
 			}
+
 		} else { // we control heading
 			double clockwise = stick.getRotation()*0.4;
 
