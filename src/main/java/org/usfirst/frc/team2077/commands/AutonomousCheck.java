@@ -18,7 +18,7 @@ public class AutonomousCheck extends SequentialCommandGroup{
 
     public void initialize(){
         (new SequentialCommandGroup(
-                new Move(20,0.0)
+                new Move(-60,0.0)
         )
         ).schedule(true);
         done = true;

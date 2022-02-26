@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;
 
-public class NewLoadLauncher extends CommandBase {
+public class PrimeAndShoot extends CommandBase {
     public static final long MAX_RPM = 5_000;
     private static final String LAUNCHER_RPM_KEY = "launcher_RPM";
     private final TalonSRX primer = new TalonSRX(6);
@@ -16,7 +16,7 @@ public class NewLoadLauncher extends CommandBase {
     private final NetworkTableEntry shooterSpeed;
     private double shooterTargetRPM;
 
-    public NewLoadLauncher() {
+    public PrimeAndShoot() {
         shooterSpeed = SmartDashboard.getEntry(LAUNCHER_RPM_KEY);
 
         shooterTargetRPM = shooterSpeed.getDouble(0D);
@@ -30,13 +30,11 @@ public class NewLoadLauncher extends CommandBase {
     public void initialize() {
         primer.set(TalonSRXControlMode.PercentOutput, -.45);
         shooter.setRPM(shooterTargetRPM);
-        System.out.println("NEW LOAD EXEC");
     }
 
     @Override
     public void end(boolean interrupted) {
         primer.set(TalonSRXControlMode.PercentOutput, 0);
         shooter.setRPM(0D);
-        System.out.println("NEW LOAD END");
     }
 }

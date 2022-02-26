@@ -8,6 +8,7 @@
 
 package org.usfirst.frc.team2077;
 
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,8 +17,6 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import org.usfirst.frc.team2077.commands.AutonomousCheck;
-import org.usfirst.frc.team2077.commands.NewIntake;
-import org.usfirst.frc.team2077.commands.NewLauncher;
 import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.sensors.*;
 import org.usfirst.frc.team2077.subsystems.*;
@@ -50,21 +49,14 @@ public class Robot extends TimedRobot {
 	//    of chassis rotation to move between commands independently of positioning.
 	public Subsystem position_;
 	public Subsystem heading_;
-//	public Subsystem target_;
-	//    Aiming system for elevating ball launcher and pointing the robot. Displayed on DS video.
-//	public Crosshairs crosshairs_;
-	//    Ball launcher with ajustable elevation and speed based on range to target.
-//	public LauncherIF launcher_;
 	public SimpleDriveSubsys simpleDriveSubsys_;
 	public LauncherIF launcher_;
 
 
 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
 	// public Telemetry telemetry_;
-	public Launcher testLauncher_; // low-level control for testing
-	public NewLauncher newLauncher_; // low-level control for testing
 
-	public NewIntake intakeController_;
+	public TalonSRX obtainer;
 
 
 	// Default commands
@@ -101,10 +93,6 @@ public class Robot extends TimedRobot {
 		setupDriveTrain();
 		chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
 //		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
-//		robot_.crosshairs_.set(Math.atan2(-p.get(EAST), -p.get(NORTH)),
-//							   Math.sqrt(p.get(NORTH) * p.get(NORTH) + p.get(EAST) * p.get(EAST)));
-//
-//		System.out.println("CROSSHAIRS:" + crosshairs_);
 		setupController();
 	}
 
@@ -119,20 +107,17 @@ public class Robot extends TimedRobot {
 		// telemetry_ = new Telemetry();
 
 		launcher_ = new Launcher();
-		testLauncher_ = launcher_ instanceof Launcher ? (Launcher) launcher_ : null;
 
-//		newLauncher_ = new NewLauncher();
-		intakeController_ = new NewIntake();
+		obtainer = new TalonSRX(7);
 
 //		simpleDriveSubsys_ = new SimpleDriveSubsys();
-//		testLauncher_ = launcher_ instanceof LauncherOld ? (LauncherOld) launcher_ : null;
 
 //		crosshairs_ = new Crosshairs();
 	}
 
 	public void setupController() {
 		// Container for remote control software objects.
-		driveStation_ = new DriveStation(position_, chassis_);
+		driveStation_ = new DriveStation(position_, chassis_, this);
 	}
 
 	/**
