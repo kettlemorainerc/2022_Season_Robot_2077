@@ -13,7 +13,7 @@ import org.usfirst.frc.team2077.drivetrain.*;
 
 
 public class DriveStation {
-    public DriveStation(Subsystem position_, DriveChassisIF chassis) {
+    public DriveStation(Subsystem position_, DriveChassisIF chassis, Robot robot) {
 //        DriveJoystick driveStick = getFlysky();
         DriveJoystick driveStick = getJoystick();
 
@@ -23,24 +23,18 @@ public class DriveStation {
         position_.setDefaultCommand(new PrimaryStickDrive3Axis(position_, driveStick, chassis));
 
         bindDriverControl(driveStick);
-        bindTechnicalControl(technicalStick);
+        bindTechnicalControl(technicalStick, robot);
     }
 
     private static void bindDriverControl(Joystick primary) {
-//        JoystickButton primaryTrigger = new JoystickButton(primary, 1);
-
-//        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());
-//        new JoystickButton(primary, 0).whenPressed(new PrimaryStickDrive3Axis());
     }
 
-    private void bindTechnicalControl(Joystick secondary_) {
-//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
-        new JoystickButton(secondary_, 1).whileHeld(new NewLoadLauncher(), true);
-//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
-        useCommand(new Intake(false), new JoystickButton(secondary_, 2));
-        useCommand(new Intake(true), new JoystickButton(secondary_, 3));
+    private void bindTechnicalControl(Joystick secondary, Robot robot) {
+        new JoystickButton(secondary, 1).whileHeld(new PrimeAndShoot(), true);
+        useCommand(new Obtainer(robot.obtainer, false), new JoystickButton(secondary, 2));
+        useCommand(new Obtainer(robot.obtainer, true), new JoystickButton(secondary, 3));
 
-        useCommand(new AlignToShadow(), new JoystickButton(secondary_,4));
+//        useCommand(new AlignToShadow(), new JoystickButton(secondary,4));
     }
 
     private static DriveJoystick getJoystick() {
