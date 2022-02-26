@@ -52,7 +52,7 @@ public class MecanumChassis extends AbstractChassis {
 									   .stream()
 									   .map(DriveModuleIF::getMaximumSpeed)
 									   .min(Comparator.naturalOrder())
-									   .orElseThrow() * .75;
+									   .orElseThrow();
 
 		// rotation speed conversion from 0-1 range to DriveModule maximum (degrees/second)
 		maximumRotation = mecanumMath.forward(MecanumMath.mapOf(
