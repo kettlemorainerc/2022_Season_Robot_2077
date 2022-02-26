@@ -14,14 +14,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.Subsystem;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import org.usfirst.frc.team2077.commands.AutonomousCheck;
+import org.usfirst.frc.team2077.commands.*;
 import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.sensors.*;
-import org.usfirst.frc.team2077.subsystems.*;
+
+import java.util.*;
 
 public class Robot extends TimedRobot {
+	private static final String runAutoKey = "Run Autonomous";
 
 	// Everything "global" hangs off the single instance of Robot,
 	// either directly or under one of the above public members.
@@ -32,14 +32,13 @@ public class Robot extends TimedRobot {
 	// Using a constructed constants object instead of statics.
 	// Put globally accessible system constants in the Constants class.
 	// Other code can access them through Robot.robot_.constants_.<FIELD_NAME>.
-	public Constants constants_ = new Constants();
 	// Drive station controls.
 	public DriveStation driveStation_;
 	// Inter-process data exchange.
 	public NetworkTableInstance networkTableInstance_;
 	// Sensors.
 	public AngleSensor angleSensor_;
-	public AnalogSettings analogSettings_;
+//	public AnalogSettings analogSettings_;
 	// Drive train, including:
 	//   Controller/motor/wheel/encoder units for each wheel.
 	//   Logic for applying robot level functionality to individual wheels.
@@ -47,10 +46,15 @@ public class Robot extends TimedRobot {
 	// Subsystems
 	//    The position/heading subsystems operate as flags to allow control
 	//    of chassis rotation to move between commands independently of positioning.
-	public Subsystem position_;
-	public Subsystem heading_;
-	public SimpleDriveSubsys simpleDriveSubsys_;
-	public LauncherIF launcher_;
+//	public Subsystem position_;
+//	public Subsystem heading_;
+//	public Subsystem target_;
+	//    Aiming system for elevating ball launcher and pointing the robot. Displayed on DS video.
+//	public Crosshairs crosshairs_;
+	//    Ball launcher with ajustable elevation and speed based on range to target.
+//	public LauncherIF launcher_;
+//	public SimpleDriveSubsys simpleDriveSubsys_;
+//	public LauncherIF launcher_;
 
 
 	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
@@ -74,6 +78,7 @@ public class Robot extends TimedRobot {
 	// This class will be instantiated exactly once, via frc.robot.Main.
 	// The constructor initializes the globally accessible static instance,
 	// all other initialization happens in robotInit().
+	private RobotHardware hardware;
 	public Robot() {
 		robot_ = this;
 	}
@@ -83,6 +88,13 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
+		if(!SmartDashboard.getEntry(runAutoKey).exists()) {
+			SmartDashboard.putBoolean(runAutoKey, true);
+			SmartDashboard.setPersistent(runAutoKey);
+		}
+
+		hardware = new RobotHardware();
+
 		SmartDashboard.putBoolean("Run Autonomous", false);
 		networkTableInstance_ = NetworkTableInstance.getDefault();
 		angleSensor_ = new AngleSensor();
@@ -97,27 +109,12 @@ public class Robot extends TimedRobot {
 	}
 
 	public void setupDriveTrain() {
-		chassis_ = new MecanumChassis();
-
-		//   These dummy subsystems support separate command ownership of robot motion and rotation.
-		position_ = new SubsystemBase() {
-		};
-		heading_ = new SubsystemBase() {
-		};
-		// telemetry_ = new Telemetry();
-
-		launcher_ = new Launcher();
-
-		obtainer = new TalonSRX(7);
-
-//		simpleDriveSubsys_ = new SimpleDriveSubsys();
-
-//		crosshairs_ = new Crosshairs();
+		chassis_ = new MecanumChassis(hardware);
 	}
 
 	public void setupController() {
 		// Container for remote control software objects.
-		driveStation_ = new DriveStation(position_, chassis_, this);
+		driveStation_ = new DriveStation(hardware);
 	}
 
 	/**
@@ -134,19 +131,25 @@ public class Robot extends TimedRobot {
 		// commands, running already-scheduled commands, removing finished or interrupted commands,
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
 		// block in order for anything in the Command-based framework to work.
-		CommandScheduler.getInstance()
-						.run();
+		CommandScheduler.getInstance().run();
 
-//		chassis_.driveModule_.values().forEach(module -> {
-//			SmartDashboard.putNumber(module.getWheelPosition() + " RPM", ((SparkNeoDriveModule) module).getRPM());
-//		});
-
-//		SmartDashboard.putNumber("range to target", robot_.crosshairs_.getRange());
+		/* Splitting up North/East (N/E) and rotation (R) velocity updates into multiple commands
+		 * makes sense as it makes it simpler to stop calculation rotation without a bunch of hullabaloo.
+		 *
+		 * However, splitting up N/E and R almost forces us to do it here, or to double-check on both R and N/E
+		 * since we don't control which runs first without tying them together and losing the functionality
+		 * provided by them being separate. */
+		EnumMap<MecanumMath.VelocityDirection, Double> targetVelocity = hardware.chassis.getVelocitySet();
+		if(
+			targetVelocity.get(MecanumMath.VelocityDirection.NORTH) == 0 &&
+			targetVelocity.get(MecanumMath.VelocityDirection.EAST) == 0 &&
+			targetVelocity.get(MecanumMath.VelocityDirection.ROTATION) == 0
+		) hardware.chassis.halt();
 	}
 
 	// The robot and the drive station exchange data packets around 50x/second so long
 	// as they are connected and the robot program is running (hasn't crashed or exited).
-	// This packet excahange is what keeps the DS related software objects, i.e. Joysticks,
+	// This packet exchange is what keeps the DS related software objects, i.e. Joysticks,
 	// in the robot code updated with their position, etc on the the actual DS, and what
 	// keeps "Robot Code" indicator on the DS green.
 	//
@@ -177,16 +180,11 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
-
-
-		 if (autonomous_ != null) {
-		   autonomous_.schedule();
-		 }
-//		if(driveStation_ != null) {
-//			driveStation_.cancel();
-//		}
-		autonomous_ = new AutonomousCheck();
-		autonomous_.schedule();
+		if(SmartDashboard.getBoolean("Run Autonomous", true))  {
+			CommandScheduler.getInstance().schedule(
+				new Move(hardware, -60, 0)
+			);
+		}
 	}
 
 	/**
@@ -215,9 +213,9 @@ public class Robot extends TimedRobot {
 		System.out.printf(
 			"[%s set RPM: %s][%s reported RPM %s]",
 			position,
-			((SparkNeoDriveModule) robot_.chassis_.driveModule_.get(position.WHEEL_POSITION)).getSetPoint(),
+			((SparkNeoDriveModule) robot_.chassis_.driveModule.get(position.WHEEL_POSITION)).getSetPoint(),
 			position,
-			((SparkNeoDriveModule) robot_.chassis_.driveModule_.get(position.WHEEL_POSITION)).getRPM()
+			((SparkNeoDriveModule) robot_.chassis_.driveModule.get(position.WHEEL_POSITION)).getRPM()
 		);
 	}
 

@@ -1,26 +1,16 @@
 package org.usfirst.frc.team2077.commands;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.motorcontrol.Talon;
-
-import static org.usfirst.frc.team2077.Robot.robot_;
+import org.usfirst.frc.team2077.subsystems.*;
 
 public class Obtainer extends RepeatedCommand {
+  protected boolean reverse;
+  protected final CANLineSubsystem obtainer;
 
-  Joystick _stick;
-  boolean reverse;
-  private final TalonSRX _obtainer;
-
-
-  /**
-   * if true then intake, if false, ejecting
-   * @param ejecting_
-   */
-  public Obtainer(TalonSRX obtainerTalon_, boolean ejecting_){
-    this._obtainer = obtainerTalon_;
-    this.reverse = ejecting_;
+  /** @param ejecting */
+  public Obtainer(CANLineSubsystem obtainerTalon, boolean ejecting){
+    addRequirements(obtainerTalon);
+    this.obtainer = obtainerTalon;
+    this.reverse = !ejecting;
   }
 
   @Override
@@ -29,12 +19,12 @@ public class Obtainer extends RepeatedCommand {
 
   @Override
   public void execute() {
-    _obtainer.set(ControlMode.PercentOutput, this.reverse ? 0.35 : -.5);
+    obtainer.setPercent(this.reverse ? -.5 : 0.35);
   }
 
   @Override
   public void end(boolean interrupted) {
-    _obtainer.set(ControlMode.PercentOutput,0);
+    obtainer.setPercent(0);
   }
 
   @Override

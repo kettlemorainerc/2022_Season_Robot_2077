@@ -6,6 +6,8 @@
 package org.usfirst.frc.team2077.commands;
 
 import edu.wpi.first.wpilibj2.command.*;
+import org.usfirst.frc.team2077.*;
+import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection;
 import org.usfirst.frc.team2077.math.*;
 import org.usfirst.frc.team2077.math.AccelerationLimits.Type;
@@ -18,6 +20,7 @@ import static org.usfirst.frc.team2077.Robot.*;
 public class Move extends CommandBase {
 	public static final double ACCELERATION_G_LIMIT = .1;
 	public static final double DECELERATION_G_LIMIT = .3;
+	private final DriveChassisIF chassis;
 	private final double[] distanceTotal_; // {north, east, rotation} (signed)
 	private final int method_; // 1 2 or 3 (#args to setVelocity/setRotation)
 
@@ -32,22 +35,23 @@ public class Move extends CommandBase {
 
 	private Position origin_;
 
-	public Move(double north, double east, double rotation) {
-		this(north, east, rotation, 3, robot_.position_, robot_.heading_);
+	public Move(RobotHardware hardware, double north, double east, double rotation) {
+		this(hardware, north, east, rotation, 3, hardware.position, hardware.heading);
 		// this(north, east, ation(rotation), 3, robot_.position_, robot_.heading_);
 	}
 
-	public Move(double north, double east) {
-		this(north, east, 0, 2, robot_.position_);
+	public Move(RobotHardware hardware, double north, double east) {
+		this(hardware, north, east, 0, 2, hardware.position);
 	}
 
-	public Move(double rotation) {
-		this(0, 0, rotation, 1, robot_.heading_);
+	public Move(RobotHardware hardware, double rotation) {
+		this(hardware, 0, 0, rotation, 1, hardware.heading);
 	}
 
-	private Move(double north, double east, double rotation, int method, Subsystem... requirements) {
-
+	private Move(RobotHardware hardware, double north, double east, double rotation, int method, Subsystem... requirements) {
 		addRequirements(requirements);
+		this.chassis = hardware.chassis;
+
 //		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
 		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
 		method_ = method;

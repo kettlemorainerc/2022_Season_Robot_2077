@@ -113,12 +113,8 @@ public class AccelerationLimits {
         };
     }
 
-    public double[][] getAdjusted() {
-        return getAdjusted(defaultChassis);
-    }
-
     public AccelerationLimits getAdjustedAdjustments() {
-        return new AccelerationLimits(getAdjusted(), defaultChassis);
+        return new AccelerationLimits(getAdjusted(defaultChassis), defaultChassis);
     }
 
     /**

@@ -5,10 +5,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.networktables.EntryListenerFlags;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import org.usfirst.frc.team2077.drivetrain.SparkNeoDriveModule;
 
-public class PrimeAndShoot extends CommandBase {
+public class PrimeAndShoot extends RepeatedCommand {
     public static final long MAX_RPM = 5_000;
     private static final String LAUNCHER_RPM_KEY = "launcher_RPM";
     private final TalonSRX primer = new TalonSRX(6);

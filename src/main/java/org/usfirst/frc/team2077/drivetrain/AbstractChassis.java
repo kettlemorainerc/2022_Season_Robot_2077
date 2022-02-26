@@ -25,14 +25,14 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
         return newMap;
     }
 
-    public final EnumMap<WheelPosition, DriveModuleIF> driveModule_;
+    public final EnumMap<WheelPosition, DriveModuleIF> driveModule;
     protected final double wheelbase_;
     protected final double trackWidth_;
     protected final double wheelRadius_;
     protected final Supplier<Double> getSeconds;
 
-    protected double maximumSpeed_;
-    protected double maximumRotation_;
+    protected double maximumSpeed;
+    protected double maximumRotation;
     protected double minimumSpeed_;
     protected double minimumRotation_;
 
@@ -45,13 +45,13 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
     protected double lastUpdateTime_ = 0;
     protected double timeSinceLastUpdate_ = 0;
 
-    protected final Position positionSet_ = new Position(); // Continuously updated by integrating velocity setpoints (velocitySet_).
-    protected final Position positionMeasured_ = new Position(); // Continuously updated by integrating measured velocities (velocityMeasured_).
+    protected final Position positionSet = new Position(); // Continuously updated by integrating velocity setpoints (velocitySet_).
+    protected final Position positionMeasured = new Position(); // Continuously updated by integrating measured velocities (velocityMeasured_).
 
     protected EnumMap<VelocityDirection, Double> velocity = defaultedDirectionMap(0d); // target velocity for next period
     protected EnumMap<VelocityDirection, Double> targetVelocity = defaultedDirectionMap(0d); // Actual velocity target
-    protected EnumMap<VelocityDirection, Double> velocitySet_ = defaultedDirectionMap(0d); // The previous period's set
-    protected EnumMap<VelocityDirection, Double> velocityMeasured_ = defaultedDirectionMap(0d); // The next period's target velocities from mecanum math
+    protected EnumMap<VelocityDirection, Double> velocitySet = defaultedDirectionMap(0d); // The previous period's set
+    protected EnumMap<VelocityDirection, Double> velocityMeasured = defaultedDirectionMap(0d); // The next period's target velocities from mecanum math
 
 // NOTE: If you uncomment the debug stuff here don't forget to do the same to the commented set in periodic
 // Debug flag gets set to true every Nth call to beginUpdate().
@@ -60,15 +60,15 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 //    public boolean debug_ = false;
 
     public AbstractChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, double wheelbase, double trackWidth, double wheelRadius, Supplier<Double> getSeconds) {
-        driveModule_ = driveModule;
+        this.driveModule = driveModule;
         wheelbase_ = wheelbase;
         trackWidth_ = trackWidth;
         wheelRadius_ = wheelRadius;
         this.getSeconds = getSeconds;
     }
 
-    public AbstractChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule_, double wheelbase, double trackWidth, double wheelRadius) {
-        this(driveModule_, wheelbase, trackWidth, wheelRadius, Clock::getSeconds);
+    public AbstractChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, double wheelbase, double trackWidth, double wheelRadius) {
+        this(driveModule, wheelbase, trackWidth, wheelRadius, Clock::getSeconds);
     }
 
     @Override
@@ -80,9 +80,9 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
         lastUpdateTime_ = now;
 
         updatePosition();
-        limitVelocity(NORTH, maximumSpeed_);
-        limitVelocity(EAST, maximumSpeed_);
-        limitVelocity(ROTATION, maximumRotation_);
+        limitVelocity(NORTH, maximumSpeed);
+        limitVelocity(EAST, maximumSpeed);
+        limitVelocity(ROTATION, maximumRotation);
         updateDriveModules();
     }
 
@@ -125,16 +125,16 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 
     @Override
     public EnumMap<VelocityDirection, Double> getVelocityMeasured() {
-        return velocityMeasured_.clone();
+        return velocityMeasured.clone();
     }
 
     @Override
     public EnumMap<VelocityDirection, Double> getMaximumVelocity() {
         EnumMap<VelocityDirection, Double> stuff = new EnumMap<>(VelocityDirection.class);
 
-        stuff.put(NORTH, maximumSpeed_);
-        stuff.put(EAST, maximumSpeed_);
-        stuff.put(ROTATION, maximumRotation_);
+        stuff.put(NORTH, maximumSpeed);
+        stuff.put(EAST, maximumSpeed);
+        stuff.put(ROTATION, maximumRotation);
 
         return stuff;
     }
@@ -182,13 +182,13 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 
     @Override
     public void setPosition(double north, double east, double heading) {
-        positionSet_.set(north, east, heading);
-        positionMeasured_.set(north, east, heading);
+        positionSet.set(north, east, heading);
+        positionMeasured.set(north, east, heading);
     }
 
     @Override
     public Position getPosition() {
-        return positionSet_.copy();
+        return positionSet.copy();
     }
 
     @Override
