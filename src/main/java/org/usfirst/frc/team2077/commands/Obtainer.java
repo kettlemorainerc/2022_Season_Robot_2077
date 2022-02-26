@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2077.commands;
 
+import org.usfirst.frc.team2077.*;
 import org.usfirst.frc.team2077.subsystems.*;
 
 public class Obtainer extends RepeatedCommand {
@@ -7,9 +8,9 @@ public class Obtainer extends RepeatedCommand {
   protected final CANLineSubsystem obtainer;
 
   /** @param ejecting */
-  public Obtainer(CANLineSubsystem obtainerTalon, boolean ejecting){
-    addRequirements(obtainerTalon);
-    this.obtainer = obtainerTalon;
+  public Obtainer(RobotHardware hardware, boolean ejecting){
+    addRequirements(hardware.OBTAINER);
+    this.obtainer = hardware.OBTAINER;
     this.reverse = !ejecting;
   }
 

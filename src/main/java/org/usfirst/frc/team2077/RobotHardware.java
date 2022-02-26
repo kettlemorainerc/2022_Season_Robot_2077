@@ -1,5 +1,7 @@
 package org.usfirst.frc.team2077;
 
+import com.revrobotics.*;
+import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.*;
 import org.usfirst.frc.team2077.drivetrain.*;
 import org.usfirst.frc.team2077.sensors.*;
@@ -22,7 +24,9 @@ public class RobotHardware {
     public final Subsystem position = new Subsystem() {};
 
     public final AngleSensor angleSensor = new AngleSensor();
-    public final DriveChassisIF chassis;
+    public final AbstractChassis chassis;
+
+    public final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
     public RobotHardware() {
         chassis = new MecanumChassis(this);

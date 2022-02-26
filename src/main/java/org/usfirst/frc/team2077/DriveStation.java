@@ -6,34 +6,39 @@
 package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.*;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
 
 public class DriveStation {
+    private final DriveJoystick driveStick;
+    private final Joystick technicalStick;
+
     public DriveStation(RobotHardware hardware) {
-//        DriveJoystick driveStick = getFlysky();
-        DriveJoystick driveStick = getJoystick();
+//        driveStick = getFlysky();
+        driveStick = getJoystick();
 
-        hardware.position.setDefaultCommand(new PrimaryStickDrive3Axis(hardware, driveStick));
-        hardware.heading.setDefaultCommand(new DriveStickChassisRotation(hardware, driveStick));
+        technicalStick = getTechnicalJoystick();
+//        technicalStick = getNumpad();
+
+        bind(hardware);
+    }
+
+    public void bind(RobotHardware hardware) {
+        hardware.position.setDefaultCommand(new CardinalMovement(hardware, driveStick));
+        hardware.heading.setDefaultCommand(new RotationMovement(hardware, driveStick));
+
         bindDriverControl(hardware, driveStick);
-
-        Joystick technicalStick = getTechnicalJoystick();
-//        Joystick technicalStick = getNumpad();
-
         bindTechnicalControl(hardware, technicalStick);
     }
 
-    /**
-     * DriveStick and Joystick in case we ever wanted to use the Numpad (or some other non-joystick) as a drive stick.
-     */
     private static void bindDriverControl(RobotHardware hardware, Joystick primary) {}
 
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
         useCommand(secondary, 1, new PrimeAndShoot());
 
-        useCommand(secondary, 2, new Obtainer(hardware.OBTAINER, false));
-        useCommand(secondary, 3, new Obtainer(hardware.OBTAINER, true));
+        useCommand(secondary, 2, new Obtainer(hardware, false));
+        useCommand(secondary, 3, new Obtainer(hardware, true));
 
 //        useCommand(secondary, 4, new AlignToShadow());
     }

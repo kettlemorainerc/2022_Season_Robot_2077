@@ -20,24 +20,21 @@ import static org.usfirst.frc.team2077.Robot.*;
 public class Move extends CommandBase {
 	public static final double ACCELERATION_G_LIMIT = .1;
 	public static final double DECELERATION_G_LIMIT = .3;
-	private final DriveChassisIF chassis;
-	private final double[] distanceTotal_; // {north, east, rotation} (signed)
-	private final int method_; // 1 2 or 3 (#args to setVelocity/setRotation)
+	private final AbstractChassis chassis;
+	private final double[] distanceTotal; // {north, east, rotation} (signed)
+	private final int method; // 1 2 or 3 (#args to setVelocity/setRotation)
 
-	private double[] fast_; // {north, east, rotation} (signed)
-	public double[] slow_; // {north, east, rotation} (signed)
-	private AccelerationLimits acceleration_; // like getAccelerationLimits, but scaled
+	private double[] fast; // {north, east, rotation} (signed)
+	public double[] slow; // {north, east, rotation} (signed)
+	private AccelerationLimits acceleration; // like getAccelerationLimits, but scaled
 
-	private double[] distanceRemaining_; // {north, east, rotation} (signed)
+	private double[] distanceRemaining; // {north, east, rotation} (signed)
+	private boolean[] finished; // {north, east, rotation}
 
-	private boolean[] finished_; // {north, east, rotation}
-
-
-	private Position origin_;
+	private Position origin;
 
 	public Move(RobotHardware hardware, double north, double east, double rotation) {
 		this(hardware, north, east, rotation, 3, hardware.position, hardware.heading);
-		// this(north, east, ation(rotation), 3, robot_.position_, robot_.heading_);
 	}
 
 	public Move(RobotHardware hardware, double north, double east) {
@@ -53,130 +50,88 @@ public class Move extends CommandBase {
 		this.chassis = hardware.chassis;
 
 //		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
-		distanceTotal_ = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
-		method_ = method;
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 DISTANCE:" +
-						   distanceTotal_[0] +
-						   " " +
-						   distanceTotal_[1] +
-						   " " +
-						   distanceTotal_[2] +
-						   " (" +
-						   method_ +
-						   ")");
+		distanceTotal = new double[]{north, east * .68, rotation * 7 / 8}; //fudged values for the multipliers
+		this.method = method;
 	}
 
 
 	@Override
 	public void initialize() {
 
-		EnumMap<VelocityDirection, Double> max = robot_.chassis_.getMaximumVelocity();
-		EnumMap<VelocityDirection, Double> min = robot_.chassis_.getMinimumVelocity();
+		EnumMap<VelocityDirection, Double> max = chassis.getMaximumVelocity();
+		EnumMap<VelocityDirection, Double> min = chassis.getMinimumVelocity();
 
 		// scale factors for north/east/rotation by fraction of maximum velocity
 		double[] scale = {
-			Math.abs(distanceTotal_[0]) / max.get(VelocityDirection.NORTH),
-			Math.abs(distanceTotal_[1]) / max.get(VelocityDirection.EAST),
-			Math.abs(distanceTotal_[2]) / max.get(VelocityDirection.ROTATION)
+			Math.abs(distanceTotal[0]) / max.get(VelocityDirection.NORTH),
+			Math.abs(distanceTotal[1]) / max.get(VelocityDirection.EAST),
+			Math.abs(distanceTotal[2]) / max.get(VelocityDirection.ROTATION)
 		};
 		double maxScale = Math.max(scale[0], Math.max(scale[1], scale[2]));
 		scale = new double[]{scale[0] / maxScale, scale[1] / maxScale, scale[2] / maxScale}; // 0 - 1
 		double[] sign = {
-			Math.signum(distanceTotal_[0]),
-			Math.signum(distanceTotal_[1]),
-			Math.signum(distanceTotal_[02])
+			Math.signum(distanceTotal[0]),
+			Math.signum(distanceTotal[1]),
+			Math.signum(distanceTotal[02])
 		};
 
 		// scale speeds and acceleration/deceleration
-		fast_ = new double[]{
+		fast = new double[]{
 			Math.max(min.get(VelocityDirection.NORTH), max.get(VelocityDirection.NORTH) * scale[0]) * sign[0],
 			Math.max(min.get(VelocityDirection.EAST), max.get(VelocityDirection.EAST) * scale[1]) * sign[1],
 			Math.max(min.get(VelocityDirection.ROTATION), max.get(VelocityDirection.ROTATION) * scale[2]) * sign[2]
 		}; // don't let maximum scale below minimum
-		slow_ = new double[]{
+		slow = new double[]{
 			min.get(VelocityDirection.NORTH) * sign[0],
 			min.get(VelocityDirection.EAST) * sign[1],
 			min.get(VelocityDirection.ROTATION) * sign[2]
 		}; // don't scale below minimum
-		acceleration_ = new AccelerationLimits(ACCELERATION_G_LIMIT, DECELERATION_G_LIMIT, robot_.chassis_, scale);
+		acceleration = new AccelerationLimits(ACCELERATION_G_LIMIT, DECELERATION_G_LIMIT, chassis, scale);
 
-		origin_ = new Position(robot_.chassis_.getPosition());
-		distanceRemaining_ = new double[]{distanceTotal_[0], distanceTotal_[1], distanceTotal_[2]};
-		finished_ = new boolean[]{
-			Math.abs(distanceRemaining_[0]) == 0.,
-			Math.abs(distanceRemaining_[1]) == 0.,
-			Math.abs(distanceRemaining_[2]) == 0.
+		origin = new Position(chassis.getPosition());
+		distanceRemaining = new double[]{distanceTotal[0], distanceTotal[1], distanceTotal[2]};
+		finished = new boolean[]{
+			Math.abs(distanceRemaining[0]) == 0.,
+			Math.abs(distanceRemaining[1]) == 0.,
+			Math.abs(distanceRemaining[2]) == 0.
 		};
-
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 DISTANCE:" +
-						   distanceTotal_[0] +
-						   " " +
-						   distanceTotal_[1] +
-						   " " +
-						   distanceTotal_[2] +
-						   " (" +
-						   method_ +
-						   ")");
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 SCALE:" + scale[0] + " " + scale[1] + " " + scale[2]);
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 FAST:" + fast_[0] + " " + fast_[1] + " " + fast_[2]);
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 SLOW:" + slow_[0] + " " + slow_[1] + " " + slow_[2]);
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 ACCEL N:" +
-						   acceleration_.get(VelocityDirection.NORTH, Type.ACCELERATION) +
-						   " " +
-						   acceleration_.get(VelocityDirection.NORTH, Type.DECELERATION));
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 ACCEL E:" +
-						   acceleration_.get(VelocityDirection.EAST, Type.ACCELERATION) +
-						   " " +
-						   acceleration_.get(VelocityDirection.EAST, Type.DECELERATION));
-		System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2 ACCEL R:" +
-						   acceleration_.get(VelocityDirection.ROTATION, Type.ACCELERATION) +
-						   " " +
-						   acceleration_.get(VelocityDirection.ROTATION, Type.DECELERATION));
 	}
 
 	@Override
 	public void execute() {
 
-		EnumMap<VelocityDirection, Double> vCurrent = robot_.chassis_.getVelocityCalculated();
+		EnumMap<VelocityDirection, Double> vCurrent = chassis.getVelocityCalculated();
 		double[] vNew = {0, 0, 0};
-		EnumMap<VelocityDirection, Double> distanceTraveled = (new Position(robot_.chassis_.getPosition())).distanceRelative(
-			origin_);
+		EnumMap<VelocityDirection, Double> distanceTraveled = (new Position(chassis.getPosition())).distanceRelative(
+			origin);
 		boolean[] slow = {false, false, false};
 		for(int i = 0; i < 3; i++) {
 			VelocityDirection direction = VelocityDirection.values()[i];
-			distanceRemaining_[i] = distanceTotal_[i] - distanceTraveled.get(direction);
+			distanceRemaining[i] = distanceTotal[i] - distanceTraveled.get(direction);
 			double distanceToStop = vCurrent.get(direction) * vCurrent.get(direction) /
-									acceleration_.get(direction, Type.DECELERATION) /
+									acceleration.get(direction, Type.DECELERATION) /
 									2.;// exact absolute value per physics
 			distanceToStop += Math.max(
 				distanceToStop * .05,
 				Math.abs(vCurrent.get(direction)) * .04
 			); // pad just a bit to avoid overshoot
-			slow[i] = finished_[i] ||
-					  Math.abs(distanceRemaining_[i]) <= distanceToStop; // slow down within padded stopping distance
+			slow[i] = finished[i] ||
+					  Math.abs(distanceRemaining[i]) <= distanceToStop; // slow down within padded stopping distance
 		}
-		boolean s = Math.abs(distanceTotal_[2]) > 0 ? slow[2] : (slow[0] && slow[1]);
+		boolean s = Math.abs(distanceTotal[2]) > 0 ? slow[2] : (slow[0] && slow[1]);
 		for(int i = 0; i < 3; i++) {
-			vNew[i] = finished_[i] ? 0. : s ? slow_[i] : fast_[i];
+			vNew[i] = finished[i] ? 0. : s ? this.slow[i] : fast[i];
 		}
-/*
-    System.out.println("$$$$$$$$$$$$$$$$$$ MOVE2:"
-    + finished_[0] + "/" + finished_[1] + "/" + finished_[2] + " " + slow[0] + "/" + slow[1] + "/" + slow[2]
-    + Math.round(distanceTraveled[0]*10)/10. + "/" + Math.round(distanceTotal_[0]*10)/10. + "@" + Math.round(vNew[0]*10)/10. + "   "
-    + Math.round(distanceTraveled[1]*10)/10. + "/" + Math.round(distanceTotal_[1]*10)/10. + "@" + Math.round(vNew[1]*10)/10. + "   "
-    + Math.round(distanceTraveled[2]*10)/10. + "/" + Math.round(distanceTotal_[2]*10)/10. + "@" + Math.round(vNew[2]*10)/10. + robot_.angleSensor_.getAngle());
-*/
-		switch(method_) {
+
+		switch(method) {
 			case 3:
-//				robot_.chassis_.setVelocity(vNew[0], vNew[1], vNew[2], acceleration_);
-				robot_.chassis_.setVelocity(vNew[0], vNew[0], vNew[2], acceleration_);
+				chassis.setVelocity(vNew[0], vNew[0], vNew[2], acceleration);
 				break;
 			case 2:
-//				robot_.chassis_.setVelocity(vNew[0], vNew[1], acceleration_);
-				robot_.chassis_.setVelocity(vNew[0], vNew[0], acceleration_);
+				chassis.setVelocity(vNew[0], vNew[0], acceleration);
 				break;
 			case 1:
-				robot_.chassis_.setRotation(vNew[2], acceleration_);
+				chassis.setRotation(vNew[2], acceleration);
 				break;
 		}
 	}
@@ -184,8 +139,8 @@ public class Move extends CommandBase {
 	@Override
 	public boolean isFinished() {
 		for(int i = 0; i < 3; i++) {
-			finished_[i] = finished_[i] || (Math.signum(distanceRemaining_[i]) != Math.signum(distanceTotal_[i]));
+			finished[i] = finished[i] || (Math.signum(distanceRemaining[i]) != Math.signum(distanceTotal[i]));
 		}
-		return Math.abs(distanceTotal_[2]) > 0 ? finished_[2] : (finished_[0] && finished_[1]);
+		return Math.abs(distanceTotal[2]) > 0 ? finished[2] : (finished[0] && finished[1]);
 	}
 }

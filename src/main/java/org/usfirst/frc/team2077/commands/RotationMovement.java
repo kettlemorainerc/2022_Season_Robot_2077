@@ -4,19 +4,18 @@ import edu.wpi.first.wpilibj2.command.*;
 import org.usfirst.frc.team2077.*;
 import org.usfirst.frc.team2077.drivetrain.*;
 
-public class DriveStickChassisRotation extends CommandBase {
+public class RotationMovement extends CommandBase {
     protected final DriveStick stick;
     protected final DriveChassisIF chassis;
 
-    public DriveStickChassisRotation(RobotHardware hardware, DriveStick stick) {
+    public RotationMovement(RobotHardware hardware, DriveStick stick) {
+        addRequirements(hardware.heading);
+
         this.stick = stick;
         this.chassis = hardware.chassis;
-        addRequirements(hardware.heading);
     }
 
     @Override public void execute() {
-        double rotation = stick.getRotation();
-
-
+        chassis.setRotation(stick.getRotation());
     }
 }

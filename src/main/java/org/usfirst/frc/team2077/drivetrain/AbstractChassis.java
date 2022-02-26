@@ -26,15 +26,15 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
     }
 
     public final EnumMap<WheelPosition, DriveModuleIF> driveModule;
-    protected final double wheelbase_;
-    protected final double trackWidth_;
-    protected final double wheelRadius_;
+    protected final double wheelbase;
+    protected final double trackWidth;
+    protected final double wheelRadius;
     protected final Supplier<Double> getSeconds;
 
     protected double maximumSpeed;
     protected double maximumRotation;
-    protected double minimumSpeed_;
-    protected double minimumRotation_;
+    protected double minimumSpeed;
+    protected double minimumRotation;
 
     // Ideally accel/decel values are set just below wheelspin or skidding to a stop.
     // Optimal values are highly dependent on wheel/surface traction and somewhat on
@@ -42,8 +42,8 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
     // For safety err on the low side for acceleration, high for deceleration.
     protected AccelerationLimits accelerationLimits = new AccelerationLimits(false, .5, .5, this);
 
-    protected double lastUpdateTime_ = 0;
-    protected double timeSinceLastUpdate_ = 0;
+    protected double lastUpdateTime = 0;
+    protected double timeSinceLastUpdate = 0;
 
     protected final Position positionSet = new Position(); // Continuously updated by integrating velocity setpoints (velocitySet_).
     protected final Position positionMeasured = new Position(); // Continuously updated by integrating measured velocities (velocityMeasured_).
@@ -61,9 +61,9 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 
     public AbstractChassis(EnumMap<WheelPosition, DriveModuleIF> driveModule, double wheelbase, double trackWidth, double wheelRadius, Supplier<Double> getSeconds) {
         this.driveModule = driveModule;
-        wheelbase_ = wheelbase;
-        trackWidth_ = trackWidth;
-        wheelRadius_ = wheelRadius;
+        this.wheelbase = wheelbase;
+        this.trackWidth = trackWidth;
+        this.wheelRadius = wheelRadius;
         this.getSeconds = getSeconds;
     }
 
@@ -76,8 +76,8 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 //        debug_ = (debugCounter_++ % debugFrequency_) == 0;
 
         double now = getSeconds.get();
-        timeSinceLastUpdate_ = now - lastUpdateTime_;
-        lastUpdateTime_ = now;
+        timeSinceLastUpdate = now - lastUpdateTime;
+        lastUpdateTime = now;
 
         updatePosition();
         limitVelocity(NORTH, maximumSpeed);
@@ -91,7 +91,8 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
         double targetVelocity = this.targetVelocity.get(direction);
 
         boolean accelerating = Math.abs(targetVelocity) >= Math.abs(currentVelocity) && Math.signum(targetVelocity) == Math.signum(currentVelocity);
-        double deltaLimit = accelerationLimits.get(direction, accelerating ? Type.ACCELERATION : Type.DECELERATION) * timeSinceLastUpdate_; // always positive
+        double deltaLimit = accelerationLimits.get(direction, accelerating ? Type.ACCELERATION : Type.DECELERATION) *
+                            timeSinceLastUpdate; // always positive
         double deltaRequested = targetVelocity - currentVelocity;
         double delta = Math.min(deltaLimit, Math.abs(deltaRequested)) * Math.signum(deltaRequested);
         double v = currentVelocity + delta;
@@ -143,9 +144,9 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
     public EnumMap<VelocityDirection, Double> getMinimumVelocity() {
         EnumMap<VelocityDirection, Double> stuff = new EnumMap<>(VelocityDirection.class);
 
-        stuff.put(NORTH, minimumSpeed_);
-        stuff.put(EAST, minimumSpeed_);
-        stuff.put(ROTATION, minimumRotation_);
+        stuff.put(NORTH, minimumSpeed);
+        stuff.put(EAST, minimumSpeed);
+        stuff.put(ROTATION, minimumRotation);
 
         return stuff;
     }

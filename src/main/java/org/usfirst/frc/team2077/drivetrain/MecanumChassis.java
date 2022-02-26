@@ -17,7 +17,6 @@ import java.util.function.*;
 
 import static java.util.stream.Collectors.*;
 import static org.usfirst.frc.team2077.drivetrain.MecanumMath.VelocityDirection.*;
-import static org.usfirst.frc.team2077.math.AccelerationLimits.Type.*;
 
 public class MecanumChassis extends AbstractChassis {
 	private static final double WHEELBASE = 20.375; // inches
@@ -46,7 +45,7 @@ public class MecanumChassis extends AbstractChassis {
 		super(driveModule, WHEELBASE, TRACK_WIDTH, WHEEL_RADIUS, getSeconds);
 		this.angleSensor = angleSensor;
 
-		mecanumMath = new MecanumMath(wheelbase_, trackWidth_, wheelRadius_, wheelRadius_, 1, 180 / Math.PI);
+		mecanumMath = new MecanumMath(wheelbase, trackWidth, wheelRadius, wheelRadius, 1, 180 / Math.PI);
 
 		// north/south speed conversion from 0-1 range to DriveModule maximum (inches/second)
 		maximumSpeed = this.driveModule.values()
@@ -54,10 +53,7 @@ public class MecanumChassis extends AbstractChassis {
 									   .map(DriveModuleIF::getMaximumSpeed)
 									   .min(Comparator.naturalOrder())
 									   .orElseThrow() * .75;
-//		Math.min(
-//			Math.min(driveModule_[0].getMaximumSpeed(), driveModule_[1].getMaximumSpeed()),
-//			Math.min(driveModule_[2].getMaximumSpeed(), driveModule_[3].getMaximumSpeed())
-//		);
+
 		// rotation speed conversion from 0-1 range to DriveModule maximum (degrees/second)
 		maximumRotation = mecanumMath.forward(MecanumMath.mapOf(
 			WheelPosition.class,
@@ -68,26 +64,10 @@ public class MecanumChassis extends AbstractChassis {
 		)).get(ROTATION);
 
 		// lowest chassis speeds supportable by the drive modules
-		minimumSpeed_ = maximumSpeed * .1; // TODO: Test and configure.
-		minimumRotation_ = maximumRotation * .1;
+		minimumSpeed = maximumSpeed * .1; // TODO: Test and configure.
+		minimumRotation = maximumRotation * .1;
 
-		System.out.println(getClass().getName() +
-						   "MAXIMUM SPEED:" +
-						   Math.round(maximumSpeed * 10.) / 10. +
-						   " IN/SEC MAXIMUM ROTATION:" +
-						   Math.round(maximumRotation * 10.) / 10. +
-						   " DEG/SEC");
-		System.out.println(getClass().getName() +
-				"MINIMUM SPEED:" +
-				Math.round(minimumSpeed_ * 10.) / 10. +
-				" IN/SEC MINIMUM ROTATION:" +
-				Math.round(minimumRotation_ * 10.) / 10. +
-				" DEG/SEC");
 		AccelerationLimits a = getAccelerationLimits();
-		System.out.println(getClass().getName() + "ACCELERATION:"
-				+ Math.round(a.get(NORTH, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(NORTH, DECELERATION) * 10.) / 10. + "/"
-				+ Math.round(a.get(EAST, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(EAST, DECELERATION) * 10.) / 10. + "/"
-				+ Math.round(a.get(ROTATION, ACCELERATION) * 10.) / 10. + "/" + Math.round(a.get(ROTATION, DECELERATION) * 10.) / 10.);
 	}
 
 	@Override
@@ -140,14 +120,14 @@ public class MecanumChassis extends AbstractChassis {
 
 		// update position with motion since last update
 		positionSet.moveRelative(
-			velocitySet.get(NORTH) * timeSinceLastUpdate_,
-			velocitySet.get(EAST) * timeSinceLastUpdate_,
-			velocitySet.get(ROTATION) * timeSinceLastUpdate_
+			velocitySet.get(NORTH) * timeSinceLastUpdate,
+			velocitySet.get(EAST) * timeSinceLastUpdate,
+			velocitySet.get(ROTATION) * timeSinceLastUpdate
 		);
 		positionMeasured.moveRelative(
-			velocityMeasured.get(NORTH) * timeSinceLastUpdate_,
-			velocityMeasured.get(EAST) * timeSinceLastUpdate_,
-			velocityMeasured.get(ROTATION) * timeSinceLastUpdate_
+			velocityMeasured.get(NORTH) * timeSinceLastUpdate,
+			velocityMeasured.get(EAST) * timeSinceLastUpdate,
+			velocityMeasured.get(ROTATION) * timeSinceLastUpdate
 		);
 		if(angleSensor != null) { // TODO: Confirm AngleSensor is actually reading. Handle bench testing.
 			double[] pS = positionSet.get();
@@ -160,7 +140,6 @@ public class MecanumChassis extends AbstractChassis {
 
 	@Override
 	protected void updateDriveModules() {
-//		System.out.println("Updating drive modules: " + this);
 		EnumMap<VelocityDirection, Double> botVelocity = getVelocityCalculated();
 
 		// compute motor speeds
@@ -183,14 +162,20 @@ public class MecanumChassis extends AbstractChassis {
 
 	@Override
 	public String toString() {
-		return "V:" +
-				Math.round(velocity.get(NORTH) * 10.) / 10. +
-				"/" +
-				Math.round(velocity.get(EAST) * 10.) / 10. +
-				"/" +
-				Math.round(velocity.get(ROTATION) * 10.) / 10.
-				+
-				" W:" +
-			   driveModule;
+		return String.format(
+			"MecanumChassis\n\t" +
+			"Velocity: %s\n\t" +
+			"Set Velocity: %s\n\t" +
+			"MeasuredVelocity: %s\n\t" +
+			"Drive Modules: %s\n\t" +
+			"Set Position: %s\n\t" +
+			"Measured Position: %s\n",
+			velocity,
+			velocitySet,
+			velocityMeasured,
+			driveModule,
+			positionSet,
+			positionMeasured
+		);
 	}
 }

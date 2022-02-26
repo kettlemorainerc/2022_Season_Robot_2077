@@ -8,7 +8,6 @@
 
 package org.usfirst.frc.team2077;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -16,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import org.usfirst.frc.team2077.commands.*;
 import org.usfirst.frc.team2077.drivetrain.*;
-import org.usfirst.frc.team2077.sensors.*;
 
 import java.util.*;
 
@@ -25,69 +23,28 @@ public class Robot extends TimedRobot {
 
 	// Everything "global" hangs off the single instance of Robot,
 	// either directly or under one of the above public members.
-	public static Robot robot_ = null;
+	public static Robot robot = null;
 
-
-	// Other globally accessible objects...
-	// Using a constructed constants object instead of statics.
-	// Put globally accessible system constants in the Constants class.
-	// Other code can access them through Robot.robot_.constants_.<FIELD_NAME>.
 	// Drive station controls.
-	public DriveStation driveStation_;
+	public DriveStation driveStation;
+
 	// Inter-process data exchange.
-	public NetworkTableInstance networkTableInstance_;
-	// Sensors.
-	public AngleSensor angleSensor_;
-//	public AnalogSettings analogSettings_;
-	// Drive train, including:
-	//   Controller/motor/wheel/encoder units for each wheel.
-	//   Logic for applying robot level functionality to individual wheels.
-	public AbstractChassis chassis_;
-	// Subsystems
-	//    The position/heading subsystems operate as flags to allow control
-	//    of chassis rotation to move between commands independently of positioning.
-//	public Subsystem position_;
-//	public Subsystem heading_;
-//	public Subsystem target_;
-	//    Aiming system for elevating ball launcher and pointing the robot. Displayed on DS video.
-//	public Crosshairs crosshairs_;
-	//    Ball launcher with ajustable elevation and speed based on range to target.
-//	public LauncherIF launcher_;
-//	public SimpleDriveSubsys simpleDriveSubsys_;
-//	public LauncherIF launcher_;
+	public NetworkTableInstance networkTableInstance;
 
-
-	//public TestLauncher tLauncher_; // Bringing back support for the TestLauncher Class though the old instance name
-	// public Telemetry telemetry_;
-
-	public TalonSRX obtainer;
-
-
-	// Default commands
 	//    Autonomous selected via drive station dashboard.
-	protected Command autonomous_;
-	//    Default teleop robot drive.
-	protected Command drive_;
-	//    Continuous update of target range and direction based on robot motion.
-//	protected Command track_;
-	//    Operator input of target position relative to robot using the stick.
-//	protected Command aim_;
-	//    Continuous update of launcher elevation for target range.
-//	protected Command range_;
+	protected Command autonomous;
 
 	// This class will be instantiated exactly once, via frc.robot.Main.
 	// The constructor initializes the globally accessible static instance,
 	// all other initialization happens in robotInit().
 	private RobotHardware hardware;
+
 	public Robot() {
-		robot_ = this;
+		robot = this;
 	}
 
-	/**
-	 * Run once on startup.
-	 */
-	@Override
-	public void robotInit() {
+	/** Run once on startup. */
+	@Override public void robotInit() {
 		if(!SmartDashboard.getEntry(runAutoKey).exists()) {
 			SmartDashboard.putBoolean(runAutoKey, true);
 			SmartDashboard.setPersistent(runAutoKey);
@@ -96,25 +53,10 @@ public class Robot extends TimedRobot {
 		hardware = new RobotHardware();
 
 		SmartDashboard.putBoolean("Run Autonomous", false);
-		networkTableInstance_ = NetworkTableInstance.getDefault();
-		angleSensor_ = new AngleSensor();
+		networkTableInstance = NetworkTableInstance.getDefault();
 
-		//analogSettings_ = new AnalogSettings(1, 2, 3);
-
-
-		setupDriveTrain();
-		chassis_.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
-//		EnumMap<VelocityDirection, Double> p = robot_.chassis_.getPosition();
-		setupController();
-	}
-
-	public void setupDriveTrain() {
-		chassis_ = new MecanumChassis(hardware);
-	}
-
-	public void setupController() {
-		// Container for remote control software objects.
-		driveStation_ = new DriveStation(hardware);
+		hardware.chassis.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
+		driveStation = new DriveStation(hardware);
 	}
 
 	/**
@@ -125,8 +67,7 @@ public class Robot extends TimedRobot {
 	 * This runs after the mode specific periodic functions, but before
 	 * LiveWindow and SmartDashboard integrated updating.
 	 */
-	@Override
-	public void robotPeriodic() {
+	@Override public void robotPeriodic() {
 		// Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
 		// commands, running already-scheduled commands, removing finished or interrupted commands,
 		// and running subsystem periodic() methods.  This must be called from the robot's periodic
@@ -164,39 +105,26 @@ public class Robot extends TimedRobot {
 	 * Note that in competition the robot may (or may not?) be
 	 * disabled briefly between autonomous and teleop.
 	 */
-	@Override
-	public void disabledInit() {
-	}
+	@Override public void disabledInit() {}
 
-	/**
-	 * Called periodically while robot is disabled.
-	 */
-	@Override
-	public void disabledPeriodic() {
-	}
+	/** Called periodically while robot is disabled. */
+	@Override public void disabledPeriodic() {}
 
-	/**
-	 * Called once each time the robot enters autonomous mode.
-	 */
-	@Override
-	public void autonomousInit() {
+	/** Called once each time the robot enters autonomous mode. */
+	@Override public void autonomousInit() {
+		if(autonomous == null) autonomous = new Move(hardware, -60, 0);
+
 		if(SmartDashboard.getBoolean("Run Autonomous", true))  {
-			CommandScheduler.getInstance().schedule(
-				new Move(hardware, -60, 0)
-			);
+			CommandScheduler.getInstance().schedule(autonomous);
 		}
 	}
 
-	/**
-	 * Called periodically during autonomous.
-	 */
+	/** Called periodically during autonomous. */
 	@Override
 	public void autonomousPeriodic() {
 	}
 
-	/**
-	 * Called once each time the robot enters teleop (operator controlled) mode.
-	 */
+	/** Called once each time the robot enters teleop (operator controlled) mode. */
 	@Override
 	public void teleopInit() {
 
@@ -204,46 +132,21 @@ public class Robot extends TimedRobot {
 		// teleop starts running. If you want the autonomous to
 		// continue until interrupted by another command, remove
 		// this line or comment it out.
-		 if (autonomous_ != null) {
-		 	autonomous_.cancel();
+		 if (autonomous != null) {
+		 	autonomous.cancel();
 		 }
 	}
 
-	private static void printWheelInfo(SparkNeoDriveModule.DrivePosition position) {
-		System.out.printf(
-			"[%s set RPM: %s][%s reported RPM %s]",
-			position,
-			((SparkNeoDriveModule) robot_.chassis_.driveModule.get(position.WHEEL_POSITION)).getSetPoint(),
-			position,
-			((SparkNeoDriveModule) robot_.chassis_.driveModule.get(position.WHEEL_POSITION)).getRPM()
-		);
-	}
+	/** Called periodically during teleop. */
+	@Override public void teleopPeriodic() {}
 
-
-	private long debug = 0;
-	/**
-	 * Called periodically during teleop.
-	 */
-	@Override
-	public void teleopPeriodic() {
-	}
-
-	/**
-	 * Called once each time the robot enters test mode.
-	 */
+	/** Called once each time the robot enters test mode. */
 	@Override
 	public void testInit() {
 		// Cancels all running commands at the start of test mode.
-		CommandScheduler.getInstance()
-						.cancelAll();
-
+		CommandScheduler.getInstance().cancelAll();
 	}
 
-	/**
-	 * Called periodically during test.
-	 */
-	@Override
-	public void testPeriodic() {
-
-	}
+	/** Called periodically during test. */
+	@Override public void testPeriodic() {}
 }

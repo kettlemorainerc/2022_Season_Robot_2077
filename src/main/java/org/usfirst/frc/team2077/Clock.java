@@ -7,15 +7,16 @@ package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.Timer;
 
+import java.util.concurrent.*;
+
 /**
  * Timing clock. Wraps {@link Timer#getFPGATimestamp} if available,
  * or {@link System#nanoTime} otherwise, to support testing code
  * without RoboRio hardware.
  */
 public final class Clock {
-
-    private static final double NS_PER_SECOND = 1000000000.;
-    private static final long nanoTimeBase_ = System.nanoTime();
+    private static final double NS_PER_SECOND = TimeUnit.SECONDS.toNanos(1);
+    private static final long nanoTimeBase = System.nanoTime();
 
     private Clock() {} // Use static API only.
 
@@ -23,6 +24,6 @@ public final class Clock {
      * @return Seconds since an indeterminate but consistent point in time.
      */
     public static double getSeconds() {
-        return Robot.robot_ != null ? Timer.getFPGATimestamp() : ((System.nanoTime()-nanoTimeBase_) / NS_PER_SECOND);
+        return Robot.robot != null ? Timer.getFPGATimestamp() : ((System.nanoTime() - nanoTimeBase) / NS_PER_SECOND);
     }
 }
