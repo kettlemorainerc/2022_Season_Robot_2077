@@ -18,7 +18,7 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         BACK_LEFT(SOUTH_WEST, 4, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
         FRONT_LEFT(NORTH_WEST, 3, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
 
-        SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_SHOOTER_RPM);        ;
+        SHOOTER(null, 5, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_SHOOTER_RPM);        ;
 
         public final double gearRatio;
         public final double radius;
