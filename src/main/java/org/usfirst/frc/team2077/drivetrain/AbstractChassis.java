@@ -73,8 +73,6 @@ public abstract class AbstractChassis extends SubsystemBase implements DriveChas
 
     @Override
     public void periodic() {
-//        debug_ = (debugCounter_++ % debugFrequency_) == 0;
-
         double now = getSeconds.get();
         timeSinceLastUpdate = now - lastUpdateTime;
         lastUpdateTime = now;

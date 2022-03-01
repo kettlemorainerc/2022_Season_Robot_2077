@@ -35,7 +35,7 @@ public class DriveStation {
     private static void bindDriverControl(RobotHardware hardware, Joystick primary) {}
 
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
-        useCommand(secondary, 1, new PrimeAndShoot());
+        useCommand(secondary, 1, new PrimeAndShoot(hardware));
 
         useCommand(secondary, 2, new Obtainer(hardware, false));
         useCommand(secondary, 3, new Obtainer(hardware, true));

@@ -1,5 +1,6 @@
 package org.usfirst.frc.team2077;
 
+import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.*;
 import edu.wpi.first.wpilibj.*;
 import edu.wpi.first.wpilibj2.command.*;
@@ -23,12 +24,15 @@ public class RobotHardware {
     public final Subsystem heading = new Subsystem() {};
     public final Subsystem position = new Subsystem() {};
 
-    public final AngleSensor angleSensor = new AngleSensor();
     public final AbstractChassis chassis;
 
     public final ColorSensorV3 colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
 
+    public final AHRS navX = new AHRS(SPI.Port.kMXP, (byte)100);
+    public final AngleSensor angleSensor;
+
     public RobotHardware() {
+        angleSensor = new AngleSensor(this);
         chassis = new MecanumChassis(this);
     }
 
