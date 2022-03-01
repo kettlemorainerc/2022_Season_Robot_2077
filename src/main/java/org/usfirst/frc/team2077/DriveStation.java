@@ -6,52 +6,55 @@
 package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
-import org.usfirst.frc.team2077.drivetrain.*;
-
 
 public class DriveStation {
-    public DriveStation(Subsystem position_, DriveChassisIF chassis) {
-//        DriveJoystick driveStick = getFlysky();
-        DriveJoystick driveStick = getJoystick();
+    private final DriveJoystick driveStick;
+    private final Joystick technicalStick;
 
-        Joystick technicalStick = getTechnicalJoystick();
-//        Joystick technicalStick = getNumpad();
+    public DriveStation(RobotHardware hardware) {
+//        driveStick = getFlysky();
+        driveStick = getJoystick();
 
-        position_.setDefaultCommand(new PrimaryStickDrive3Axis(position_, driveStick, chassis));
+        technicalStick = getTechnicalJoystick();
+//        technicalStick = getNumpad();
 
-        bindDriverControl(driveStick);
-        bindTechnicalControl(technicalStick);
+        bind(hardware);
     }
 
-    private static void bindDriverControl(Joystick primary) {
-//        JoystickButton primaryTrigger = new JoystickButton(primary, 1);
+    public void bind(RobotHardware hardware) {
+        hardware.position.setDefaultCommand(new CardinalMovement(hardware, driveStick));
+        hardware.heading.setDefaultCommand(new RotationMovement(hardware, driveStick));
 
-//        new JoystickButton(primary, 4).whenPressed(new ResetCrosshairs());
-//        new JoystickButton(primary, 0).whenPressed(new PrimaryStickDrive3Axis());
+        bindDriverControl(hardware, driveStick);
+        bindTechnicalControl(hardware, technicalStick);
     }
 
-    private void bindTechnicalControl(Joystick secondary_) {
-//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
-        new JoystickButton(secondary_, 1).whileHeld(new NewLoadLauncher(), true);
-//        useCommand(new LoadLauncher(secondary_), new JoystickButton(secondary_, 1));
-        useCommand(new Intake(false), new JoystickButton(secondary_, 2));
-        useCommand(new Intake(true), new JoystickButton(secondary_, 3));
+    private static void bindDriverControl(RobotHardware hardware, Joystick primary) {}
 
-        useCommand(new AlignToShadow(), new JoystickButton(secondary_,4));
+    private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
+        useCommand(secondary, 1, new PrimeAndShoot());
+
+        useCommand(secondary, 2, new Obtainer(hardware, false));
+        useCommand(secondary, 3, new Obtainer(hardware, true));
+
+//        useCommand(secondary, 4, new AlignToShadow());
     }
 
+    /** Normal (brighter/silver) joystick that supports rotation */
     private static DriveJoystick getJoystick() {
         return new DriveJoystick(0).setSensitivity(.2, 2.5);
     }
 
+    /** Flysky Drone Controller */
     private static DriveJoystick getFlysky() {
         return new DriveJoystick(2, 4).setDriveSensitivity(.3, 1)
                                    .setRotationSensitivity(.05, 1);
     }
 
+    /** Currently the darker joystick that doesn't support rotation */
     private static Joystick getTechnicalJoystick() {
         return new Joystick(1);
     }
@@ -60,7 +63,8 @@ public class DriveStation {
         return new Joystick(5);
     }
 
-    public static void useCommand(BindableCommand command, JoystickButton button) {
-        command.bind(button);
+    /** bind command to the given joystick button */
+    public static void useCommand(Joystick joystick, int button, BindableCommand command) {
+        command.bind(new JoystickButton(joystick, button));
     }
 }

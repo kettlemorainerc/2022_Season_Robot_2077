@@ -15,7 +15,7 @@ public class ChassisTest {
 
     private static MecanumChassis chassis;
     static { // Robot needs to initialized to prevent a NullPointer dereference inside Mecanum/AbstractChassis
-/ /        new org.usfirst.frc.team2077.Robot();
+        new org.usfirst.frc.team2077.Robot();
         new Robot();
     }
 
@@ -34,9 +34,9 @@ public class ChassisTest {
         driveModule.put(WheelPosition.SOUTH_WEST, SOUTH_WEST);
         driveModule.put(WheelPosition.NORTH_WEST, NORTH_WEST);
 
-//        chassis = new MecanumChassis(driveModule, TestClock::getAndIncrementSeconds);
+        chassis = new MecanumChassis(null, driveModule, TestClock::getAndIncrementSeconds);
 
-//        chassis.setGLimits(1 / G, 1 / G); // set acc/deceleration limits to ~ 1 in/s
+        chassis.setGLimits(1 / G, 1 / G); // set acc/deceleration limits to ~ 1 in/s
     }
 
     private <T extends Enum<T>> void assertEnumMapEquals(String message, EnumMap<T, Double> expectedMap, EnumMap<T, Double> actualMap, double delta) {
@@ -70,7 +70,7 @@ public class ChassisTest {
         assertEquals(8, chassis.getMaximumVelocity().get(VelocityDirection.NORTH), 0);
         assertEquals(8, chassis.getMaximumVelocity().get(VelocityDirection.EAST), 0);
         assertEquals(
-            21.319359818821333,
+            19.98326914897694,
             chassis.getMaximumVelocity().get(VelocityDirection.ROTATION),
             0
         );
@@ -221,19 +221,18 @@ public class ChassisTest {
         Position setPosition, measuredPosition;
 
         BotValues() {}
-
-//        BotValues(MecanumChassis chassis) {
-//            calculateVelocity = chassis.getVelocityCalculated();
-//            setVelocity = chassis.getVelocitySet();
-//            measuredVelocity = chassis.getVelocityMeasured();
-//            wheelVelocities(
-//                NORTH_EAST.getVelocity(),
-//                SOUTH_EAST.getVelocity(),
-//                SOUTH_WEST.getVelocity(),
-//                NORTH_WEST.getVelocity()
-//            );
-//            setPosition = chassis.positionSet_;
-//            measuredPosition = chassis.positionMeasured_;
+        BotValues(MecanumChassis chassis) {
+            calculateVelocity = chassis.getVelocityCalculated();
+            setVelocity = chassis.getVelocitySet();
+            measuredVelocity = chassis.getVelocityMeasured();
+            wheelVelocities(
+                NORTH_EAST.getVelocity(),
+                SOUTH_EAST.getVelocity(),
+                SOUTH_WEST.getVelocity(),
+                NORTH_WEST.getVelocity()
+            );
+            setPosition = chassis.positionSet;
+            measuredPosition = chassis.positionMeasured;
         }
 
         public BotValues wheelVelocities(double northEast, double southEast, double southWest, double northWest) {

@@ -18,14 +18,14 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
         BACK_LEFT(SOUTH_WEST, 4, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
         FRONT_LEFT(NORTH_WEST, 3, false, WHEEL_GEAR_RATIO, WHEEL_RADIUS, MAX_WHEEL_RPM, 1.4e-4, 1e-6, 0),
 
-        SHOOTER(null, 5, true, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_SHOOTER_RPM);        ;
+        SHOOTER(null, 5, false, LAUNCHER_GEAR_RATIO, LAUNCHER_WHEEL_RADIUS, MAX_SHOOTER_RPM);        ;
 
-        private final double gearRatio;
-        private final double radius;
-        private final double maxRPM;
-        private final int ID;
-        private final boolean INVERSE;
-        private final double P, I, D;
+        public final double gearRatio;
+        public final double radius;
+        public final double maxRPM;
+        public final int ID;
+        public final boolean INVERSE;
+        public final double P, I, D;
         public final WheelPosition WHEEL_POSITION;
 
         DrivePosition(WheelPosition position, int id, boolean inverse, double gearRatio, double radius, double maxRPM) {
@@ -55,8 +55,8 @@ public class SparkNeoDriveModule extends CANSparkMax implements DriveModuleIF {
     private final SparkMaxPIDController pidController;
     private final RelativeEncoder encoder;
     private double setPoint;
-    private final double circumference;
-    private final double maxRPM;
+    public final double circumference;
+    public final double maxRPM;
     private final DrivePosition position;
 
     public SparkNeoDriveModule(final DrivePosition pos) {
