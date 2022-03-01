@@ -16,6 +16,16 @@ public class RotationMovement extends CommandBase {
     }
 
     @Override public void execute() {
-        chassis.setRotation(stick.getRotation());
+        chassis.setRotation01(stick.getRotation());
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+
+    }
+
+    @Override
+    public boolean isFinished() {
+        return false;
     }
 }

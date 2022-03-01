@@ -7,6 +7,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import com.kauailabs.navx.frc.AHRS;
 
 import edu.wpi.first.wpilibj.SPI;
+import org.usfirst.frc.team2077.RobotHardware;
 
 public class AngleSensor {
 	// these fields are private to the timer thread
@@ -17,8 +18,8 @@ public class AngleSensor {
 
 	private AtomicReference<Double> angleREF = new AtomicReference<>(0.);
 
-	public AngleSensor() {
-		navX = new AHRS(SPI.Port.kMXP, (byte)200);
+	public AngleSensor(RobotHardware hardware) {
+		navX = hardware.navX;
 		System.out.println("NavX:" + navX);
 		System.out.println("Connected:" + navX.isConnected());
 		System.out.println("Calibrating:" + navX.isCalibrating());

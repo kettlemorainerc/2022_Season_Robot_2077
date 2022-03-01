@@ -82,10 +82,12 @@ public class Robot extends TimedRobot {
 		 * provided by them being separate. */
 		EnumMap<MecanumMath.VelocityDirection, Double> targetVelocity = hardware.chassis.getVelocitySet();
 		if(
-			targetVelocity.get(MecanumMath.VelocityDirection.NORTH) == 0 &&
-			targetVelocity.get(MecanumMath.VelocityDirection.EAST) == 0 &&
-			targetVelocity.get(MecanumMath.VelocityDirection.ROTATION) == 0
-		) hardware.chassis.halt();
+			targetVelocity.get(MecanumMath.VelocityDirection.NORTH) == 0D &&
+			targetVelocity.get(MecanumMath.VelocityDirection.EAST) == 0D &&
+			targetVelocity.get(MecanumMath.VelocityDirection.ROTATION) == 0D
+		){
+			hardware.chassis.halt();
+		}
 	}
 
 	// The robot and the drive station exchange data packets around 50x/second so long
