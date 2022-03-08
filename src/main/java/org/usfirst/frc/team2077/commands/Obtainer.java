@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import org.usfirst.frc.team2077.*;
 import org.usfirst.frc.team2077.subsystems.*;
 
-import java.util.function.Consumer;
 
 public class Obtainer extends RepeatedCommand {
   protected boolean ejecting;

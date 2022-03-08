@@ -6,7 +6,6 @@
 package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.*;
-import edu.wpi.first.wpilibj2.command.*;
 import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
 
@@ -18,8 +17,8 @@ public class DriveStation {
 //        driveStick = getFlysky();
         driveStick = getJoystick();
 
-        technicalStick = getTechnicalJoystick();
-//        technicalStick = getNumpad();
+//        technicalStick = getTechnicalJoystick();
+        technicalStick = getNumpad();
 
         bind(hardware);
     }
@@ -32,15 +31,25 @@ public class DriveStation {
         bindTechnicalControl(hardware, technicalStick);
     }
 
-    private static void bindDriverControl(RobotHardware hardware, Joystick primary) {}
+    private static void bindDriverControl(RobotHardware hardware, Joystick primary) {
+        useCommand(primary, 1, new PrimeAndShoot(hardware));
+
+    }
 
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
-        useCommand(secondary, 1, new PrimeAndShoot(hardware));
-
-        useCommand(secondary, 2, new Obtainer(hardware, false));
-        useCommand(secondary, 3, new Obtainer(hardware, true));
-
+        PrimeAndShoot primeShooter = new PrimeAndShoot(hardware);
+//        useCommand(secondary, 1, new PrimeAndShoot(hardware));
+//        useCommand(secondary, 2, new Obtainer(hardware, false));
+//        useCommand(secondary, 3, new Obtainer(hardware, true));
 //        useCommand(secondary, 4, new AlignToShadow());
+
+        useCommand(secondary, 1, new AlignToBall(hardware));
+        useCommand(secondary, 3, new Obtainer(hardware, true));
+        useCommand(secondary, 4, new Obtainer(hardware, false));
+        useCommand(secondary, 5, new ShooterSpeeder(hardware, primeShooter, +250));
+        useCommand(secondary, 9, new ShooterSpeeder(hardware, primeShooter, -250));
+        useCommand(secondary, 6, primeShooter);
+
     }
 
     /** Normal (brighter/silver) joystick that supports rotation */
@@ -51,7 +60,7 @@ public class DriveStation {
     /** Flysky Drone Controller */
     private static DriveJoystick getFlysky() {
         return new DriveJoystick(2, 4).setDriveSensitivity(.3, 1)
-                                   .setRotationSensitivity(.05, 1);
+                                   .setRotationSensitivity(.05, 2.5);
     }
 
     /** Currently the darker joystick that doesn't support rotation */
