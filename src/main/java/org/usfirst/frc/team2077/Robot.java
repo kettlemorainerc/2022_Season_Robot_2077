@@ -9,6 +9,7 @@
 package org.usfirst.frc.team2077;
 
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -107,7 +108,9 @@ public class Robot extends TimedRobot {
 	 * Note that in competition the robot may (or may not?) be
 	 * disabled briefly between autonomous and teleop.
 	 */
-	@Override public void disabledInit() {}
+	@Override public void disabledInit() {
+		hardware.pdh.setSwitchableChannel(false);
+	}
 
 	/** Called periodically while robot is disabled. */
 	@Override public void disabledPeriodic() {}
@@ -129,6 +132,7 @@ public class Robot extends TimedRobot {
 	/** Called once each time the robot enters teleop (operator controlled) mode. */
 	@Override
 	public void teleopInit() {
+		hardware.pdh.setSwitchableChannel(true);
 
 		// This makes sure that the autonomous stops running when
 		// teleop starts running. If you want the autonomous to

@@ -27,8 +27,7 @@ public class AlignToBall extends RepeatedCommand {
         NetworkTableEntry nte = null;
 
         if ( (nte = getNTE("ball1")) != null) {
-            Double valueNeedingNewName = NetworkTableInstance.getDefault().getEntry("ball1").getDouble(0);
-            System.out.println("888888888888888888888888888888888 "+-valueNeedingNewName);//.getDoubleArray(new double[0])[3]);
+            Double valueNeedingNewName = -NetworkTableInstance.getDefault().getEntry("ball1").getDouble(0);
 //            double[] ball1 = nte.getDoubleArray(new double[0]);
 //            if(ball1[3] != 0.0)
             if(valueNeedingNewName == 0D)
@@ -37,7 +36,7 @@ public class AlignToBall extends RepeatedCommand {
                 valueNeedingNewName = 50D;
 
 
-            hardware.chassis.setRotation(valueNeedingNewName*0.75);
+            hardware.chassis.setRotation(valueNeedingNewName);
         }
     }
 

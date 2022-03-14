@@ -21,6 +21,9 @@ public class RobotHardware {
     public final CANLineSubsystem.Talon PRIMER = new CANLineSubsystem.Talon(6);
     public final CANLineSubsystem.Talon OBTAINER = new CANLineSubsystem.Talon(7);
 
+    public final CANLineSubsystem.Talon CLIMBER_ALPHA = new CANLineSubsystem.Talon(8);
+    public final CANLineSubsystem.Talon CLIMBER_BETA = new CANLineSubsystem.Talon(9);
+
     public final Subsystem heading = new Subsystem() {};
     public final Subsystem position = new Subsystem() {};
 
@@ -30,6 +33,9 @@ public class RobotHardware {
 
     public final AHRS navX = new AHRS(SPI.Port.kMXP, (byte)100);
     public final AngleSensor angleSensor;
+
+    public final PowerDistribution pdh = new PowerDistribution();
+
 
     public RobotHardware() {
         angleSensor = new AngleSensor(this);

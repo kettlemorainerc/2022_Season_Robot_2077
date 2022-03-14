@@ -50,6 +50,8 @@ public class DriveStation {
         useCommand(secondary, 9, new ShooterSpeeder(hardware, primeShooter, -250));
         useCommand(secondary, 6, primeShooter);
 
+        ClimbAssamblys test = new ClimbAssamblys(hardware);
+        useCommand(secondary, 10, new ClimbDirector(hardware,test));
     }
 
     /** Normal (brighter/silver) joystick that supports rotation */
