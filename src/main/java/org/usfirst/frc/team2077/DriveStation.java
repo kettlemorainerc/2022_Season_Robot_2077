@@ -39,7 +39,7 @@ public class DriveStation {
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
         PrimeAndShoot primeShooter = new PrimeAndShoot(hardware);
 
-        useCommand(secondary, 1, new AlignToBall(hardware));
+//        useCommand(secondary, 1, new AlignToBall(hardware));
         useCommand(secondary, 3, new Obtainer(hardware, true));
         useCommand(secondary, 4, new Obtainer(hardware, false));
         new JoystickButton(secondary, 5).whileHeld(new ShooterSpeeder(hardware, primeShooter, 250));
@@ -56,8 +56,9 @@ public class DriveStation {
 
     /** Normal (brighter/silver) joystick that supports rotation */
     private static DriveJoystick getJoystick() {
-        return new DriveJoystick(0).setSensitivity(.15, 5);
+        return new DriveJoystick(0).setDriveSensitivity(.15, 5).setRotationSensitivity(.1, 1);
     }
+
 
     /** Flysky Drone Controller */
     private static DriveJoystick getFlysky() {

@@ -133,9 +133,10 @@ public class Robot extends TimedRobot {
 	@Override public void autonomousInit() {
 		if(autonomous == null){
 			autonomous = new SequentialCommandGroup(
-				new Move(hardware, -60, 0),
-				new TimedPrimeAndShoot(hardware, 3),
-				new ObtainBall(hardware)
+			new Move(hardware, -15, 0),
+			new TimedPrimeAndShoot(hardware, 2),
+			new Move(hardware, -30, 0)
+//				new ObtainBall(hardware)
 			);
 		}
 

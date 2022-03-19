@@ -10,7 +10,6 @@ import org.usfirst.frc.team2077.RobotHardware;
 import org.usfirst.frc.team2077.subsystems.CANLineSubsystem;
 
 public class PrimeAndShoot extends RepeatedCommand {
-    public static final long MAX_SHOOTER_RPM = 5_000;
     public static final long[] SHOOTING_RPM_RANGE = {2_000L, 5_400L};//5_400L //TODO: TIE TO SPARKNEODRIVEMODULE CLASS
     private static final String LAUNCHER_RPM_KEY = "launcher_RPM";
     private final CANLineSubsystem.Talon primer;
@@ -26,20 +25,20 @@ public class PrimeAndShoot extends RepeatedCommand {
 
         shooterSpeed = SmartDashboard.getEntry(LAUNCHER_RPM_KEY);
 
-        shooterTargetRPM = shooterSpeed.getDouble(0D);
-        if(!shooterSpeed.exists()) shooterSpeed.setDouble(0D);
+        shooterTargetRPM = shooterSpeed.getDouble(SHOOTING_RPM_RANGE[1]);
+        if(!shooterSpeed.exists()) shooterSpeed.setDouble(SHOOTING_RPM_RANGE[1]);
         shooterSpeed.addListener(entry -> {
-            shooterTargetRPM = entry.getEntry().getDouble(0D);
+            shooterTargetRPM = entry.getEntry().getDouble(SHOOTING_RPM_RANGE[1]);
         }, EntryListenerFlags.kUpdate | EntryListenerFlags.kNew | EntryListenerFlags.kImmediate | EntryListenerFlags.kLocal);
     }
 
     public void changeSetpoint(int byRPM){
-        if(shooterSpeed.getDouble(0D)+byRPM < SHOOTING_RPM_RANGE[0]){
+        if(shooterSpeed.getDouble(SHOOTING_RPM_RANGE[1])+byRPM < SHOOTING_RPM_RANGE[0]){
             shooterSpeed.setDouble(SHOOTING_RPM_RANGE[0]);
-        }else if(shooterSpeed.getDouble(0D)+byRPM > SHOOTING_RPM_RANGE[1]){
+        }else if(shooterSpeed.getDouble(SHOOTING_RPM_RANGE[1])+byRPM > SHOOTING_RPM_RANGE[1]){
             shooterSpeed.setDouble(SHOOTING_RPM_RANGE[1]);
         }else{
-            shooterSpeed.setDouble(shooterSpeed.getDouble(0)+byRPM);
+            shooterSpeed.setDouble(shooterSpeed.getDouble(SHOOTING_RPM_RANGE[1])+byRPM);
         }
 
         NetworkTableInstance.getDefault().getEntry("launcher_RPM").setDouble(shooterSpeed.getDouble(0D));
