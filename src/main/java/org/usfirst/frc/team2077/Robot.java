@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.usfirst.frc.team2077.commands.*;
 import org.usfirst.frc.team2077.drivetrain.*;
 
@@ -47,16 +48,15 @@ public class Robot extends TimedRobot {
 	/** Run once on startup. */
 	@Override public void robotInit() {
 		if(!SmartDashboard.getEntry(runAutoKey).exists()) {
-			SmartDashboard.putBoolean(runAutoKey, true);
+			SmartDashboard.putBoolean(runAutoKey, false);
 			SmartDashboard.setPersistent(runAutoKey);
 		}
 
 		hardware = new RobotHardware();
 
-		SmartDashboard.putBoolean("Run Autonomous", false);
 		networkTableInstance = NetworkTableInstance.getDefault();
 
-		hardware.chassis.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
+//		hardware.chassis.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
 		driveStation = new DriveStation(hardware);
 	}
 
@@ -117,9 +117,15 @@ public class Robot extends TimedRobot {
 
 	/** Called once each time the robot enters autonomous mode. */
 	@Override public void autonomousInit() {
-		if(autonomous == null) autonomous = new Move(hardware, -60, 0);
+		if(autonomous == null){
+			autonomous = new SequentialCommandGroup(
+				new Move(hardware, -60, 0),
+				new PrimeAndShoot()
+			);
 
-		if(SmartDashboard.getBoolean("Run Autonomous", true))  {
+		}
+
+		if(SmartDashboard.getBoolean("Run Autonomous", false)) {
 			CommandScheduler.getInstance().schedule(autonomous);
 		}
 	}

@@ -32,7 +32,7 @@ public class DriveStation {
     }
 
     private static void bindDriverControl(RobotHardware hardware, Joystick primary) {
-        useCommand(primary, 1, new PrimeAndShoot(hardware));
+        useCommand(primary, 1, new Obtainer(hardware, false));
 
     }
 
@@ -43,20 +43,22 @@ public class DriveStation {
 //        useCommand(secondary, 3, new Obtainer(hardware, true));
 //        useCommand(secondary, 4, new AlignToShadow());
 
-        useCommand(secondary, 1, new AlignToBall(hardware));
+//        useCommand(secondary, 1, new AlignToBall(hardware));
         useCommand(secondary, 3, new Obtainer(hardware, true));
         useCommand(secondary, 4, new Obtainer(hardware, false));
         useCommand(secondary, 5, new ShooterSpeeder(hardware, primeShooter, +250));
         useCommand(secondary, 9, new ShooterSpeeder(hardware, primeShooter, -250));
         useCommand(secondary, 6, primeShooter);
 
-        ClimbAssamblys test = new ClimbAssamblys(hardware);
-        useCommand(secondary, 10, new ClimbDirector(hardware,test));
+        useCommand(secondary, 11, new Climber(hardware, false, true));
+        useCommand(secondary, 12, new Climber(hardware, true, true));
+        useCommand(secondary, 15, new Climber(hardware, false, false));
+        useCommand(secondary, 16, new Climber(hardware, true, false));
     }
 
     /** Normal (brighter/silver) joystick that supports rotation */
     private static DriveJoystick getJoystick() {
-        return new DriveJoystick(0).setSensitivity(.2, 2.5);
+        return new DriveJoystick(0).setSensitivity(.15, 5);
     }
 
     /** Flysky Drone Controller */
