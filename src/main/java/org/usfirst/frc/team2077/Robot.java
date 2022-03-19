@@ -8,11 +8,14 @@
 
 package org.usfirst.frc.team2077;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import org.usfirst.frc.team2077.commands.*;
 import org.usfirst.frc.team2077.drivetrain.*;
 
@@ -21,9 +24,14 @@ import java.util.*;
 public class Robot extends TimedRobot {
 	private static final String runAutoKey = "Run Autonomous";
 
+	private Map<String,NetworkTableEntry> nte_ = new TreeMap<>();
+
+	public static final String IS_RED_KEY = "Alliance";
+
 	// Everything "global" hangs off the single instance of Robot,
 	// either directly or under one of the above public members.
 	public static Robot robot = null;
+
 
 	// Drive station controls.
 	public DriveStation driveStation;
@@ -45,6 +53,7 @@ public class Robot extends TimedRobot {
 
 	/** Run once on startup. */
 	@Override public void robotInit() {
+
 		if(!SmartDashboard.getEntry(runAutoKey).exists()) {
 			SmartDashboard.putBoolean(runAutoKey, true);
 			SmartDashboard.setPersistent(runAutoKey);
@@ -57,6 +66,12 @@ public class Robot extends TimedRobot {
 
 		hardware.chassis.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
 		driveStation = new DriveStation(hardware);
+
+//		DriverStation.Alliance.valueOf(); TODO: FIX
+//		SmartDashboard.getEntry("Alliance").setNumber(alliance);
+
+		var alliance = DriverStation.getAlliance();
+		SmartDashboard.getEntry(IS_RED_KEY).setBoolean(alliance == DriverStation.Alliance.Red);
 	}
 
 	/**
@@ -114,11 +129,18 @@ public class Robot extends TimedRobot {
 
 	/** Called once each time the robot enters autonomous mode. */
 	@Override public void autonomousInit() {
-		if(autonomous == null) autonomous = new Move(hardware, -60, 0);
+		if(autonomous == null){
+			autonomous = new SequentialCommandGroup(
+				new Move(hardware, -60, 0),
+				new TimedPrimeAndShoot(hardware, 3),
+				new ObtainBall(hardware)
+			);
+		}
 
 		if(SmartDashboard.getBoolean("Run Autonomous", true))  {
 			CommandScheduler.getInstance().schedule(autonomous);
 		}
+		autonomous.schedule();
 	}
 
 	/** Called periodically during autonomous. */
@@ -151,4 +173,6 @@ public class Robot extends TimedRobot {
 
 	/** Called periodically during test. */
 	@Override public void testPeriodic() {}
+
+
 }

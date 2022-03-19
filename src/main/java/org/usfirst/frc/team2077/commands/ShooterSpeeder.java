@@ -3,7 +3,7 @@ package org.usfirst.frc.team2077.commands;
 import org.usfirst.frc.team2077.RobotHardware;
 import org.usfirst.frc.team2077.subsystems.CANLineSubsystem;
 
-public class ShooterSpeeder extends RepeatedCommand {
+public class ShooterSpeeder extends SelfDefinedCommand {
     protected final CANLineSubsystem shooter;
     protected final PrimeAndShoot primeShooter;
     protected final int speedChangeValue;

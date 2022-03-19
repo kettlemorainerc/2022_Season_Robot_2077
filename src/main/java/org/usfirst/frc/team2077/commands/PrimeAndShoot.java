@@ -15,12 +15,15 @@ public class PrimeAndShoot extends RepeatedCommand {
     private static final String LAUNCHER_RPM_KEY = "launcher_RPM";
     private final CANLineSubsystem.Talon primer;
     private final CANLineSubsystem.SparkNeo shooter;
-    private NetworkTableEntry shooterSpeed;
+    private final NetworkTableEntry shooterSpeed;
     private double shooterTargetRPM;
 
     public PrimeAndShoot(RobotHardware hardware) {
-        shooter = hardware.SHOOTER;
         primer = hardware.PRIMER;
+        shooter = hardware.SHOOTER;
+
+        addRequirements(primer, shooter);
+
         shooterSpeed = SmartDashboard.getEntry(LAUNCHER_RPM_KEY);
 
         shooterTargetRPM = shooterSpeed.getDouble(0D);
@@ -30,22 +33,21 @@ public class PrimeAndShoot extends RepeatedCommand {
         }, EntryListenerFlags.kUpdate | EntryListenerFlags.kNew | EntryListenerFlags.kImmediate | EntryListenerFlags.kLocal);
     }
 
-    public void changeSetpoint(int byRPM){
-        shooterSpeed = SmartDashboard.getEntry(LAUNCHER_RPM_KEY);
-        if(shooterSpeed.getDouble(0D)+byRPM < SHOOTING_RPM_RANGE[0]){
+    public void changeSetpoint(int adjustment){
+        double target = shooterTargetRPM + adjustment;
+        shooterTargetRPM = target;
+        if(target < SHOOTING_RPM_RANGE[0]){
             shooterSpeed.setDouble(SHOOTING_RPM_RANGE[0]);
-        }else if(shooterSpeed.getDouble(0D)+byRPM > SHOOTING_RPM_RANGE[1]){
+        }else if(target > SHOOTING_RPM_RANGE[1]){
             shooterSpeed.setDouble(SHOOTING_RPM_RANGE[1]);
         }else{
-            shooterSpeed.setDouble(shooterSpeed.getDouble(4_000)+byRPM);
+            shooterSpeed.setDouble(target);
         }
-
-        NetworkTableInstance.getDefault().getEntry("launcher_RPM").setDouble(shooterSpeed.getDouble(0D));
     }
 
     @Override
     public void initialize() {
-        primer.setPercent(-.45);
+        primer.setPercent(-0.45);
         shooter.setRPM(shooterTargetRPM);
     }
 
