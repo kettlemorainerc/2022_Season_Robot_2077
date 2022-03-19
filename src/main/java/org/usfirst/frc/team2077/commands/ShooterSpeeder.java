@@ -3,7 +3,7 @@ package org.usfirst.frc.team2077.commands;
 import org.usfirst.frc.team2077.RobotHardware;
 import org.usfirst.frc.team2077.subsystems.CANLineSubsystem;
 
-public class ShooterSpeeder extends RepeatedCommand {
+public class ShooterSpeeder extends SelfDefinedCommand {
     protected final CANLineSubsystem shooter;
     protected final PrimeAndShoot primeShooter;
     protected final int speedChangeValue;
@@ -24,7 +24,7 @@ public class ShooterSpeeder extends RepeatedCommand {
     @Override
     public void execute() {
         if(!alreadyRan){
-            primeShooter.changeSetpoint(speedChangeValue);
+            primeShooter.changeSetpoint(this.speedChangeValue);
             alreadyRan = true;
         }
     }
@@ -32,5 +32,10 @@ public class ShooterSpeeder extends RepeatedCommand {
     @Override
     public boolean isFinished() {
         return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        alreadyRan = false;
     }
 }

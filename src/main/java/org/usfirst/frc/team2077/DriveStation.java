@@ -38,16 +38,14 @@ public class DriveStation {
 
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
         PrimeAndShoot primeShooter = new PrimeAndShoot(hardware);
-//        useCommand(secondary, 1, new PrimeAndShoot(hardware));
-//        useCommand(secondary, 2, new Obtainer(hardware, false));
-//        useCommand(secondary, 3, new Obtainer(hardware, true));
-//        useCommand(secondary, 4, new AlignToShadow());
 
-//        useCommand(secondary, 1, new AlignToBall(hardware));
+        useCommand(secondary, 1, new AlignToBall(hardware));
         useCommand(secondary, 3, new Obtainer(hardware, true));
         useCommand(secondary, 4, new Obtainer(hardware, false));
-        useCommand(secondary, 5, new ShooterSpeeder(hardware, primeShooter, +250));
-        useCommand(secondary, 9, new ShooterSpeeder(hardware, primeShooter, -250));
+        new JoystickButton(secondary, 5).whileHeld(new ShooterSpeeder(hardware, primeShooter, 250));
+        new JoystickButton(secondary, 9).whileHeld(new ShooterSpeeder(hardware, primeShooter, -250));
+//        useCommand(secondary, 5, new ShooterSpeeder(hardware, primeShooter, +250));
+//        useCommand(secondary, 9, new ShooterSpeeder(hardware, primeShooter, -250));
         useCommand(secondary, 6, primeShooter);
 
         useCommand(secondary, 11, new Climber(hardware, false, true));
