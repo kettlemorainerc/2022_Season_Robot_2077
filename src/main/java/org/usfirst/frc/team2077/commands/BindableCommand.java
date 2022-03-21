@@ -10,10 +10,13 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
- * Full speed translation for a fixed time.
+ * A command that's intended to be bound to some {@link JoystickButton Joystick button}
  */
 public abstract class BindableCommand extends CommandBase {
-
+    /**
+     * Bind this command to a given joystick button
+     * @param button a joystick button
+     */
     public abstract void bind(JoystickButton button);
 
 }
