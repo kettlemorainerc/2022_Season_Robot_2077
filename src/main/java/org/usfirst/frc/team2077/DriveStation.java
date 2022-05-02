@@ -10,12 +10,13 @@ import edu.wpi.first.wpilibj2.command.button.*;
 import org.usfirst.frc.team2077.commands.*;
 
 public class DriveStation {
-    private final DriveJoystick driveStick;
+    private final DriveStick driveStick;
     private final Joystick technicalStick;
 
     public DriveStation(RobotHardware hardware) {
 //        driveStick = getFlysky();
-        driveStick = getJoystick();
+//        driveStick = getJoystick();
+        driveStick = getXbox();
 
 //        technicalStick = getTechnicalJoystick();
         technicalStick = getNumpad();
@@ -31,15 +32,19 @@ public class DriveStation {
         bindTechnicalControl(hardware, technicalStick);
     }
 
-    private static void bindDriverControl(RobotHardware hardware, Joystick primary) {
-        useCommand(primary, 1, new Obtainer(hardware, false));
+    private static void bindDriverControl(RobotHardware hardware, DriveStick primary) {
+        if(primary instanceof DriveJoystick){
+            useCommand((DriveJoystick) primary, 1, new Obtainer(hardware, false));
+        }else if(primary instanceof DriveXboxController){
+            hardware.OBTAINER.setDefaultCommand(new XBoxObtainer(hardware,false,(DriveXboxController) primary));
+        }
 
     }
 
     private void bindTechnicalControl(RobotHardware hardware, Joystick secondary) {
         PrimeAndShoot primeShooter = new PrimeAndShoot(hardware);
 
-//        useCommand(secondary, 1, new AlignToBall(hardware));
+        useCommand(secondary, 1, new AlignToBall(hardware));
         useCommand(secondary, 3, new Obtainer(hardware, true));
         useCommand(secondary, 4, new Obtainer(hardware, false));
         new JoystickButton(secondary, 5).whileHeld(new ShooterSpeeder(hardware, primeShooter, 250));
@@ -65,9 +70,9 @@ public class DriveStation {
                                    .setRotationSensitivity(.05, 2.5);
     }
 
-//    private static DriveJoystick getXbox(){
-//        return new DriveJoystick(1,)
-//    }
+    private static DriveXboxController getXbox(){
+        return new DriveXboxController(1).setDriveSensitivity(.15,1).setRotationSensitivity(.05,1.5);
+    }
 
     /** Currently the darker joystick that doesn't support rotation */
     private static Joystick getTechnicalJoystick() {

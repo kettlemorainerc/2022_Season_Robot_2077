@@ -63,6 +63,8 @@ public class Robot extends TimedRobot {
 		hardware = new RobotHardware();
 
 		networkTableInstance = NetworkTableInstance.getDefault();
+		networkTableInstance.getEntry("game_time").setDouble(-1d);
+
 
 //		hardware.chassis.setPosition(-180, 0, 0); // TODO: Initialize from Smart Dashboard
 		driveStation = new DriveStation(hardware);
@@ -131,6 +133,16 @@ public class Robot extends TimedRobot {
 
 	/** Called once each time the robot enters autonomous mode. */
 	@Override public void autonomousInit() {
+		//Start timer on overlay
+		if(networkTableInstance.getEntry("game_time").exists()){//TODO: Both do the same thing right now
+//			networkTableInstance.getEntry("game_time").setDouble(DriverStation.getMatchTime());
+			networkTableInstance.getEntry("game_time").setDouble(0);
+		}else{
+//			networkTableInstance.getEntry("game_time").setDouble(DriverStation.getMatchTime());
+			networkTableInstance.getEntry("game_time").setDouble(0);
+//			networkTableInstance.getEntry("game_time").setPersistent();
+		}
+
 		if(autonomous == null){
 			autonomous = new SequentialCommandGroup(
 			new Move(hardware, -15, 0),

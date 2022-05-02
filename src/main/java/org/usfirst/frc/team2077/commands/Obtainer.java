@@ -12,7 +12,7 @@ public class Obtainer extends RepeatedCommand {
   protected boolean ejecting;
   protected final CANLineSubsystem obtainer;
   private static final String OBTAINER_EJECT_KEY = "obtainer_eject_power", OBTAINER_INTAKE_KEY = "obtainer_intake_power";
-  private double DEFAULT_EJECT_POWER = 0.35, DEFAULT_INTAKE_POWER = .5; // Revere is handled later, just put the percentage here (0.0 - 1.0)
+  private double DEFAULT_EJECT_POWER = 0.35, DEFAULT_INTAKE_POWER = .7; // Revere is handled later, just put the percentage here (0.0 - 1.0)
   private double ejectPower = DEFAULT_EJECT_POWER, intakePower = DEFAULT_INTAKE_POWER;
   private NetworkTableEntry ejectPowerNTE, intakePowerNTE;
 

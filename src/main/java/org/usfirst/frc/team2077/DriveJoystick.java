@@ -2,8 +2,6 @@ package org.usfirst.frc.team2077;
 
 import edu.wpi.first.wpilibj.*;
 
-import static edu.wpi.first.wpilibj.Joystick.AxisType.kZ;
-
 public class DriveJoystick extends Joystick implements DriveStick {
     private static final int DEFAULT_ROTATION_AXIS = AxisType.kZ.value;
 
@@ -42,18 +40,15 @@ public class DriveJoystick extends Joystick implements DriveStick {
     }
 
     public double getNorth() {
-        return adjustInputSensitivity(getY(), driveDeadBand, driveExponent);
+        return DriveStick.adjustInputSensitivity(getY(), driveDeadBand, driveExponent);
     }
 
     public double getEast() {
-        return adjustInputSensitivity(getX(), driveDeadBand, driveExponent);
+        return DriveStick.adjustInputSensitivity(getX(), driveDeadBand, driveExponent);
     }
 
     public double getRotation() {
-        return adjustInputSensitivity(getRawAxis(rotationAxis), rotationDeadBand, rotationExponent);
+        return DriveStick.adjustInputSensitivity(getRawAxis(rotationAxis), rotationDeadBand, rotationExponent);
     }
 
-    protected static double adjustInputSensitivity(double input, double deadBand, double exponent) {
-        return Math.pow(Math.max(0, Math.abs(input) - deadBand) / (1 - deadBand), exponent) * Math.signum(input);
-    }
 }
